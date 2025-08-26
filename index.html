@@ -39,11 +39,14 @@
     </div>
 
     <!-- Tooltip System -->
-    <div class="tooltip" id="tooltip" style="display: none;">
+    <div class="tooltip" id="tooltip">
         <div class="tooltip-content" id="tooltipContent">
             <!-- Tooltip text will be populated here -->
         </div>
     </div>
+
+    <!-- Test Tooltip Button (for debugging) -->
+    <!-- <button id="testTooltip" style="position: fixed; top: 10px; right: 10px; z-index: 1000000; padding: 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">Test Tooltip</button> -->
 
     <!-- Spectators List UI -->
     <div class="spectators-container" id="spectatorsContainer" style="display: none;">
@@ -316,11 +319,15 @@
 
                 // Add tooltip events if tooltip exists
                 if (itemData && itemData.tooltip) {
+                    console.log('🔍 Adding tooltip for:', itemData.name, 'with text:', itemData.tooltip);
+                    
                     itemElement.addEventListener('mouseenter', function() {
+                        console.log('🔍 Mouse enter on:', itemData.name);
                         showTooltip(itemData.tooltip, this);
                     });
                     
                     itemElement.addEventListener('mouseleave', function() {
+                        console.log('🔍 Mouse leave on:', itemData.name);
                         hideTooltip();
                     });
                 }
@@ -584,17 +591,21 @@
             
             if (tooltip && tooltipContent) {
                 tooltipContent.textContent = text;
-                tooltip.style.display = 'block';
                 
-                // Position tooltip near the element
-                const rect = element.getBoundingClientRect();
-                tooltip.style.left = (rect.left + rect.width / 2) + 'px';
-                tooltip.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+                // Position tooltip in bottom-right corner (like in the image)
+                tooltip.style.right = '30px';
+                tooltip.style.bottom = '30px';
+                tooltip.style.left = 'auto';
+                
+                // Show tooltip
+                tooltip.style.display = 'block';
                 
                 // Show with animation
                 setTimeout(() => {
                     tooltip.classList.add('visible');
                 }, 10);
+                
+                console.log('🔍 Tooltip shown:', text);
             }
         }
 
@@ -1026,6 +1037,15 @@
                 console.log('🔄 Retrying image load...');
                 setHeaderImage(bannerImageUrl);
             }, 500);
+
+            // Add test tooltip button functionality
+            // const testButton = document.getElementById('testTooltip');
+            // if (testButton) {
+            //     testButton.addEventListener('click', function() {
+            //         console.log('🔍 Test tooltip button clicked');
+            //         showTooltip('This is a test tooltip to verify the system is working!', this);
+            //     });
+            // }
         });
 
         window.addEventListener('message', function(event) {
