@@ -788,10 +788,11 @@ html, body {
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(0, 0, 0, 0.8) !important; 
+    background: rgba(0, 0, 0, 0.411) !important; 
     display: none;
-    align-items: center !important;
+    align-items: flex-end !important;
     justify-content: center !important;
+    padding-bottom: 25vh !important;
     z-index: 999999 !important;
     font-family: 'Roboto', sans-serif !important;
 }
@@ -809,10 +810,6 @@ html, body {
     font-size: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.7);
     overflow: hidden;
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 .key-binding-header {
