@@ -151,8 +151,7 @@
                     settings: {
                         title: 'Settings',
                         items: [
-                        { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m", tooltip: "Detect and monitor invisible players within 50 meters" },
-
+                            { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m", tooltip: "Detect and monitor invisible players within 50 meters" },
                         ]
                     }
                 }
@@ -1139,9 +1138,9 @@
                 } else if (data.type === 'toggleSpectatorsList') {
                     toggleSpectatorsList(data.enabled);
                     
-                    // Update the checkbox state in the menu data
-                    if (currentMenuType === 'self' && menuData.self.tabs.miscellaneous) {
-                        const SpectatorslistItem = menuData.self.tabs.miscellaneous.items.find(item => item.action === 'spectators_list');
+                    // Update the checkbox state in the menu data for settings tab
+                    if (currentMenuType === 'settings' && menuData.settings.tabs.settings) {
+                        const SpectatorslistItem = menuData.settings.tabs.settings.items.find(item => item.action === 'spectators_list');
                         if (SpectatorslistItem) {
                             SpectatorslistItem.checked = data.enabled;
                             // Re-render the menu to show updated checkbox state
