@@ -338,7 +338,8 @@
                     } else {
                         // Handle special actions immediately
                         if (itemData.action === 'tp_to_waypoint') {
-                            // For teleport, select the item and immediately trigger teleport
+                            // For teleport, ensure currentIndex is properly set and trigger teleport
+                            currentIndex = index; // Force set the current index
                             updateSelection(index, currentMenuType);
                             // Simulate pressing Enter to trigger teleport
                             // This ensures the teleport function is called immediately
@@ -350,6 +351,7 @@
                             }, 50);
                         } else {
                             // For other actions, use the normal selectEffect
+                            currentIndex = index; // Force set the current index
                             updateSelection(index, currentMenuType);
                             selectEffect(index, currentMenuType);
                         }
@@ -673,6 +675,11 @@
 
             if (menuType === 'main' && selectedOption.action === 'self') {
                 currentMenuType = 'self';
+                currentIndex = 0; // Reset index when entering self menu
+                // Also reset the current tab to ensure proper state
+                if (menuData.self.currentTab) {
+                    menuData.self.currentTab = 'player'; // Reset to player tab
+                }
                 menuPath = ['HOME', 'SELF'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
@@ -687,6 +694,11 @@
                 updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'settings') {
                 currentMenuType = 'settings';
+                currentIndex = 0; // Reset index when entering settings menu
+                // Also reset the current tab to ensure proper state
+                if (menuData.settings.currentTab) {
+                    menuData.settings.currentTab = 'main'; // Reset to main tab
+                }
                 menuPath = ['HOME', 'MENU SETTINGS', 'BANNER SETTINGS'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
@@ -796,6 +808,7 @@
             if (currentMenuType === 'self' || currentMenuType === 'settings' || currentMenuType === 'misc') {
                 const previousMenu = currentMenuType;
                 currentMenuType = 'main';
+                currentIndex = 0; // Reset index when going back to main menu
                 menuPath = ['HOME'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
