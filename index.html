@@ -119,7 +119,7 @@
                 title: 'Miscellaneous',
                 items: [
                     { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint", tooltip: "Instantly teleport to your set waypoint on the map" },
-                    { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m", tooltip: "Detect and monitor invisible players within 50 meters" },
+                    { name: "Slide Mode", action: "slide_mode", type: "toggle", checked: false, icon: '<i class="fa-solid fa-person-running"></i>', desc: "Enable enhanced movement sliding", tooltip: "Activate slide mode for enhanced movement and sliding abilities" },
                 ]
             },
                     wardrobe: {
@@ -150,7 +150,10 @@
                     },
                     settings: {
                         title: 'Settings',
-                        items: []
+                        items: [
+                        { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m", tooltip: "Detect and monitor invisible players within 50 meters" },
+
+                        ]
                     }
                 }
             },
@@ -328,6 +331,13 @@
                                 itemData.checked ? 'Spectators List Activated' : 'Spectators List Deactivated',
                                 itemData.checked ? 'Spectators list players...' : 'Spectators list stopped.',
                                 itemData.checked ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'
+                            );
+                        } else if (itemData.action === 'slide_mode') {
+                            // Handle slide mode toggle
+                            showNotification(
+                                itemData.checked ? 'Slide Mode Activated' : 'Slide Mode Deactivated',
+                                itemData.checked ? 'Enhanced movement sliding enabled!' : 'Enhanced movement sliding disabled.',
+                                itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
                             );
                         }
 
@@ -1134,6 +1144,17 @@
                         const SpectatorslistItem = menuData.self.tabs.miscellaneous.items.find(item => item.action === 'spectators_list');
                         if (SpectatorslistItem) {
                             SpectatorslistItem.checked = data.enabled;
+                            // Re-render the menu to show updated checkbox state
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'toggleSlideMode') {
+                    // Update the checkbox state in the menu data for slide mode
+                    if (currentMenuType === 'self' && menuData.self.tabs.miscellaneous) {
+                        const slideModeItem = menuData.self.tabs.miscellaneous.items.find(item => item.action === 'slide_mode');
+                        if (slideModeItem) {
+                            slideModeItem.checked = data.enabled;
                             // Re-render the menu to show updated checkbox state
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
