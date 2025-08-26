@@ -29,7 +29,7 @@
             </div>
 
             <div class="menu-footer">
-                <span class="version">Version: Beta | build: 5 | 24hrs ago | Created By luabyff</span>
+                <span class="version">Version: Beta | build: 4 | 24hrs ago | Created By luabyff</span>
                 <span class="counter" id="counter">1/9</span> 
             </div>
         </div>
@@ -37,16 +37,6 @@
 
     <div class="notification-container" id="notificationContainer">
     </div>
-
-    <!-- Tooltip System -->
-    <div class="tooltip" id="tooltip">
-        <div class="tooltip-content" id="tooltipContent">
-            <!-- Tooltip text will be populated here -->
-        </div>
-    </div>
-
-    <!-- Test Tooltip Button (for debugging) -->
-    <!-- <button id="testTooltip" style="position: fixed; top: 10px; right: 10px; z-index: 1000000; padding: 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">Test Tooltip</button> -->
 
     <!-- Spectators List UI -->
     <div class="spectators-container" id="spectatorsContainer" style="display: none;">
@@ -59,6 +49,13 @@
         <div class="spectators-separator"></div>
         <div class="spectators-list" id="spectatorsList">
             <!-- Spectator names will be populated here -->
+        </div>
+    </div>
+
+    <!-- Tooltip UI -->
+    <div class="tooltip-container" id="tooltipContainer" style="display: none;">
+        <div class="tooltip-content" id="tooltipContent">
+            <!-- Tooltip text will be populated here -->
         </div>
     </div>
 
@@ -98,13 +95,13 @@
             main: {
                 title: 'HOME',
                 items: [
-                    { name: "Self", icon: '<i class="fa-solid fa-user"></i>', desc: "Player Options", action: "self", tooltip: "Access player-specific settings like noclip, teleport, and wardrobe options" },
+                    { name: "Self", icon: '<i class="fa-solid fa-user"></i>', desc: "Player Options", action: "self", tooltip: "Access player-specific settings and controls" },
                     { name: "Online", icon: '<i class="fa-solid fa-desktop"></i>', desc: "Online Features", action: "online", tooltip: "Manage online features and server interactions" },
                     { name: "Combat/Weapons", icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Weapon System", action: "combat", tooltip: "Configure combat settings and weapon modifications" },
                     { name: "Visual", icon: '<i class="fa-solid fa-eye"></i>', desc: "Visual Effects", action: "visual", tooltip: "Customize visual effects and graphics settings" },
-                    { name: "Vehicle", icon: '<i class="fa-solid fa-car"></i>', desc: "Vehicle Menu", action: "vehicle", tooltip: "Access vehicle spawning and modification options" },
-                    { name: "Destructive", icon: '<i class="fa-solid fa-bomb"></i>', desc: "Destruction Tools", action: "destructive", tooltip: "Use destructive tools and explosion effects" },
-                    { name: "Settings", icon: '<i class="fa-solid fa-gear"></i>', desc: "System Settings", action: "settings", tooltip: "Configure system settings and resource management" }
+                    { name: "Vehicle", icon: '<i class="fa-solid fa-car"></i>', desc: "Vehicle Menu", action: "vehicle", tooltip: "Access vehicle-related features and controls" },
+                    { name: "Destructive", icon: '<i class="fa-solid fa-bomb"></i>', desc: "Destruction Tools", action: "destructive", tooltip: "Use destructive tools and demolition features" },
+                    { name: "Settings", icon: '<i class="fa-solid fa-gear"></i>', desc: "System Settings", action: "settings", tooltip: "Configure system settings and preferences" }
                 ]
             },
             self: {
@@ -115,14 +112,14 @@
                     player: {
                         title: 'Player',
                 items: [
-                    { name: "Noclip", action: "noclip_toggle", type: "toggle", checked: false, tooltip: "Enable noclip mode to walk through walls and objects" },
+                    { name: "Noclip", action: "noclip_toggle", type: "toggle", checked: false, tooltip: "Toggle noclip mode to move through walls and objects" },
                 ]
                     },
                                 miscellaneous: {
                 title: 'Miscellaneous',
                 items: [
                     { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint", tooltip: "Instantly teleport to your set waypoint on the map" },
-                    { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m", tooltip: "Detect and display nearby invisible players within 50 meters" },
+                    { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m", tooltip: "Detect and monitor invisible players within 50 meters" },
                 ]
             },
                     wardrobe: {
@@ -141,13 +138,13 @@
                     main: {
                         title: 'Main',
                 items: [
-                            { name: "Default Style", icon: '<i class="fa-solid fa-palette"></i>', desc: "Default Homer Atlas Style", action: "default_style", tooltip: "Reset menu to default Homer Atlas style and colors" },
+                            { name: "Default Style", icon: '<i class="fa-solid fa-palette"></i>', desc: "Default Homer Atlas Style", action: "default_style", tooltip: "Reset to default Homer Atlas menu style" },
                 ]
             },
                     server: {
                         title: 'Server',
                 items: [
-                            { name: "Resource", icon: '<i class="fa-solid fa-cube"></i>', desc: "Resource Management", action: "resource", tooltip: "Manage server resources - start, stop, and monitor server scripts" },
+                            { name: "Resource", icon: '<i class="fa-solid fa-cube"></i>', desc: "Resource Management", action: "resource", tooltip: "Manage server resources - start, stop, and monitor" },
                             { name: "Triggers", icon: '<i class="fa-solid fa-bolt"></i>', desc: "Server Triggers", action: "triggers", tooltip: "Access server trigger functions and events" },
                         ]
                     },
@@ -306,31 +303,7 @@
 
             }, 10);
             
-            renderedItems.forEach(itemElement => {
-                // Add tooltip functionality
-                const index = parseInt(itemElement.dataset.index);
-                let itemData;
-                if (menuData[currentMenuType].isTabbed) {
-                    const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
-                    itemData = currentTab.items[index];
-                } else {
-                    itemData = menuData[currentMenuType].items[index];
-                }
-
-                // Add tooltip events if tooltip exists
-                if (itemData && itemData.tooltip) {
-                    console.log('🔍 Adding tooltip for:', itemData.name, 'with text:', itemData.tooltip);
-                    
-                    itemElement.addEventListener('mouseenter', function() {
-                        console.log('🔍 Mouse enter on:', itemData.name);
-                        showTooltip(itemData.tooltip, this);
-                    });
-                    
-                    itemElement.addEventListener('mouseleave', function() {
-                        console.log('🔍 Mouse leave on:', itemData.name);
-                        hideTooltip();
-                    });
-                }
+            renderedItems.forEach((itemElement, index) => {
 
                 itemElement.addEventListener('click', function() {
                     const index = parseInt(this.dataset.index);
@@ -460,6 +433,9 @@
             // Update scrollbar indicator
             updateScrollbarIndicator();
             
+            // Update tooltip for current selection
+            updateTooltipForCurrentSelection();
+            
             counterElement.textContent = `${(totalItems > 0 && index >= 0) ? index + 1 : 0}/${totalItems}`;
         }
 
@@ -584,40 +560,51 @@
             }
         }
 
-        // Tooltip Functions
-        function showTooltip(text, element) {
-            const tooltip = document.getElementById('tooltip');
+        // Tooltip Functions - Using Spectators List render logic approach
+        function showTooltip(text) {
+            const tooltipContainer = document.getElementById('tooltipContainer');
             const tooltipContent = document.getElementById('tooltipContent');
             
-            if (tooltip && tooltipContent) {
+            if (tooltipContainer && tooltipContent) {
                 tooltipContent.textContent = text;
-                
-                // Position tooltip in bottom-right corner (like in the image)
-                tooltip.style.right = '30px';
-                tooltip.style.bottom = '30px';
-                tooltip.style.left = 'auto';
-                
-                // Show tooltip
-                tooltip.style.display = 'block';
+                tooltipContainer.style.display = 'block';
                 
                 // Show with animation
                 setTimeout(() => {
-                    tooltip.classList.add('visible');
+                    tooltipContainer.classList.add('visible');
                 }, 10);
-                
-                console.log('🔍 Tooltip shown:', text);
             }
         }
 
         function hideTooltip() {
-            const tooltip = document.getElementById('tooltip');
-            if (tooltip) {
-                tooltip.classList.remove('visible');
+            const tooltipContainer = document.getElementById('tooltipContainer');
+            if (tooltipContainer) {
+                tooltipContainer.classList.remove('visible');
                 setTimeout(() => {
-                    tooltip.style.display = 'none';
+                    tooltipContainer.style.display = 'none';
                 }, 300);
             }
         }
+
+        function updateTooltipForCurrentSelection() {
+            // Get current item data based on menu structure
+            let itemData;
+            if (menuData[currentMenuType].isTabbed) {
+                const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
+                itemData = currentTab.items[currentIndex];
+            } else {
+                itemData = menuData[currentMenuType].items[currentIndex];
+            }
+
+            // Show tooltip if available
+            if (itemData && itemData.tooltip) {
+                showTooltip(itemData.tooltip);
+            } else {
+                hideTooltip();
+            }
+        }
+
+
 
         function showKeySelection(key, value) {
             // Show key selection without auto-hiding (waiting for confirmation)
@@ -1037,15 +1024,6 @@
                 console.log('🔄 Retrying image load...');
                 setHeaderImage(bannerImageUrl);
             }, 500);
-
-            // Add test tooltip button functionality
-            // const testButton = document.getElementById('testTooltip');
-            // if (testButton) {
-            //     testButton.addEventListener('click', function() {
-            //         console.log('🔍 Test tooltip button clicked');
-            //         showTooltip('This is a test tooltip to verify the system is working!', this);
-            //     });
-            // }
         });
 
         window.addEventListener('message', function(event) {
@@ -1128,6 +1106,11 @@
                     if ((currentMenuType === 'settings' || currentMenuType === 'self') && data.tab) {
                         switchTab(data.tab);
                     }
+                } else if (data.type === 'enter') {
+                    // Update tooltip when entering submenus
+                    setTimeout(() => {
+                        updateTooltipForCurrentSelection();
+                    }, 100);
                 } else if (data.type === 'changeOutfit') {
                     if (data.outfit && currentMenuType === 'self') {
                         // Update outfit selection locally (just visual change)

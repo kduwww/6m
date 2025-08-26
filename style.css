@@ -781,29 +781,31 @@ html, body {
     text-align: right;
 }
 
-/* Tooltip Styles */
-.tooltip {
-    position: fixed !important;
-    bottom: 30px !important;
-    right: 30px !important;
-    left: auto !important;
-    background: rgba(0, 0, 0, 0.95) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 6px !important;
-    padding: 12px 16px !important;
-    max-width: 250px !important;
-    z-index: 999999 !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8) !important;
+
+
+/* Tooltip Styles - Bottom Center */
+.tooltip-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    border: none;
+    border-radius: 6px;
+    padding: 12px 16px;
+    max-width: 300px;
+    z-index: 999999;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateX(-50%) translateY(10px);
     transition: all 0.3s ease;
     pointer-events: none;
     display: none;
 }
 
-.tooltip.visible {
+.tooltip-container.visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 .tooltip-content {
@@ -812,7 +814,7 @@ html, body {
     font-size: 12px;
     font-weight: 500;
     line-height: 1.4;
-    text-align: left;
+    text-align: center;
 }
 
 /* Key Binding Overlay Styles - Consistent, Smaller, Balanced */
