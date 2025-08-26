@@ -789,7 +789,7 @@ html, body {
     bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.699);
+    background: rgba(0, 0, 0, 0.800);
     border: none;
     border-radius: 6px;
     padding: 12px 16px;
