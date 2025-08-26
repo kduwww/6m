@@ -781,6 +781,37 @@ html, body {
     text-align: right;
 }
 
+/* Hint Tooltip Styles */
+.hint-tooltip {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 12px 16px;
+    max-width: 250px;
+    z-index: 1001;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.hint-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hint-content {
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: left;
+}
+
 /* Key Binding Overlay Styles - Consistent, Smaller, Balanced */
 .key-binding-overlay {
     position: fixed !important;

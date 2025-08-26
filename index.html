@@ -52,12 +52,19 @@
         </div>
     </div>
 
+    <!-- Hint Tooltip -->
+    <div class="hint-tooltip" id="hintTooltip" style="display: none;">
+        <div class="hint-content" id="hintContent">
+            <!-- Hint text will be populated here -->
+        </div>
+    </div>
+
     <!-- Key Binding Overlay -->
     <div class="key-binding-overlay" id="keyBindingOverlay" style="display: none;">
         <div class="key-binding-container">
             <div class="key-binding-header">
                 <i class="fa-solid fa-keyboard"></i>
-                <span>Set keybind (Open key)</span>
+                <span>Select a keybind (Open key)</span>
             </div>
             <div class="key-binding-separator"></div>
             <div class="key-binding-input" id="keyBindingInput">
@@ -472,7 +479,36 @@
 
             // This will be populated by Lua with actual invisible player data
             // For now, show a loading message
-            spectatorsList.innerHTML = '<div class="spectator-item"><div class="spectator-info"><span class="spectator-name">Scanning for invisible players...</span></div></div>';
+            spectatorsList.innerHTML = '<div class="spectator-item" data-hint="Currently scanning the area for invisible players within 50m range"><div class="spectator-info"><span class="spectator-name">Scanning for invisible players...</span></div></div>';
+        }
+
+        // Hint functions
+        function showHint(text) {
+            const tooltip = document.getElementById('hintTooltip');
+            const content = document.getElementById('hintContent');
+            
+            if (tooltip && content) {
+                content.textContent = text;
+                tooltip.style.display = 'block';
+                
+                // Add visible class after a small delay for smooth animation
+                setTimeout(() => {
+                    tooltip.classList.add('visible');
+                }, 10);
+            }
+        }
+
+        function hideHint() {
+            const tooltip = document.getElementById('hintTooltip');
+            
+            if (tooltip) {
+                tooltip.classList.remove('visible');
+                
+                // Hide after animation completes
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                }, 300);
+            }
         }
 
         function populateSpectatorsList(spectators) {
@@ -488,7 +524,7 @@
             console.log('Populating spectators list with', spectators.length, 'players');
 
             if (spectators.length === 0) {
-                spectatorsList.innerHTML = '<div class="spectator-item"><div class="spectator-info"><span class="spectator-name">No Admin</span></div></div>';
+                spectatorsList.innerHTML = '<div class="spectator-item" data-hint="No invisible players currently detected in the area">No Admin</div>';
                 console.log('Spectators list cleared - no players detected');
                 return;
             }
@@ -500,8 +536,11 @@
                 const type = spectator.type || '';
                 const distance = spectator.distance ? Math.round(spectator.distance) : 0;
                 
+                // Create hint text for each spectator
+                const hintText = `Player: ${spectator.name} | Type: ${type} | Distance: ${distance}m | Status: Invisible`;
+                
                 html += `
-                    <div class="spectator-item ${isSelected ? 'selected' : ''}" data-index="${index}">
+                    <div class="spectator-item ${isSelected ? 'selected' : ''}" data-index="${index}" data-hint="${hintText}">
                         <div class="spectator-info">
                             ${tag ? `<span class="spectator-tag">${tag}</span>` : ''}
                             <span class="spectator-name">${spectator.name}</span>
@@ -513,7 +552,7 @@
 
             spectatorsList.innerHTML = html;
 
-            // Add click handlers for spectator items
+            // Add click handlers and hover events for spectator items
             const spectatorItems = spectatorsList.querySelectorAll('.spectator-item');
             spectatorItems.forEach((item, index) => {
                 item.addEventListener('click', function() {
@@ -521,6 +560,18 @@
                     spectatorItems.forEach(i => i.classList.remove('selected'));
                     // Add selection to clicked item
                     this.classList.add('selected');
+                });
+
+                // Add hover events for hints
+                item.addEventListener('mouseenter', function() {
+                    const hint = this.getAttribute('data-hint');
+                    if (hint) {
+                        showHint(hint);
+                    }
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    hideHint();
                 });
             });
         }
