@@ -781,16 +781,16 @@ html, body {
     text-align: right;
 }
 
-/* Key Binding Overlay Styles - Consistent, Smaller, Balanced */
+/* Key Binding Overlay Styles - Down in the Middle */
 .key-binding-overlay {
     position: fixed !important;
-    top: 0 !important;
+    top: 60vh !important; /* Move overlay down to 60% of viewport height */
     left: 0 !important;
     width: 100vw !important;
-    height: 100vh !important;
+    height: 40vh !important; /* Only cover the lower 40% of the screen */
     background: rgba(0, 0, 0, 0.6) !important; 
     display: none;
-    align-items: center !important;
+    align-items: flex-start !important; /* Align items to the top of this lower section */
     justify-content: center !important;
     z-index: 999999 !important;
     font-family: 'Roboto', sans-serif !important;
@@ -809,6 +809,7 @@ html, body {
     font-size: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.7);
     overflow: hidden;
+    margin-top: 24px; /* Add a little space from the top of the lower section */
 }
 
 .key-binding-header {
