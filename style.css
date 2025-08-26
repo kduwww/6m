@@ -847,8 +847,8 @@ html, body {
 
 .key-binding-input {
     background: rgba(15, 15, 15, 0.98);
-    padding: 16px 20px;
-    height: 45px;
+    padding: 12px 20px;
+    height: 30px;
     display: flex;
     align-items: center;
     position: relative;
@@ -856,14 +856,14 @@ html, body {
 }
 
 .key-binding-input #keyBindingText {
-    font-size: 16px;
+    font-size: 11px;
     color: #ffffff;
     font-weight: 500;
     font-family: 'Courier New', monospace;
 }
 
 .key-binding-input .cursor {
-    font-size: 16px;
+    font-size: 11px;
     color: #ffffff;
     font-weight: 500;
     font-family: 'Courier New', monospace;
