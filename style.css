@@ -840,15 +840,15 @@ html, body {
 
 .key-binding-separator {
     height: 2px;
-    background: #00a8ff;
+    background: #0077ff91;
     width: 100%;
     margin: 0;
 }
 
 .key-binding-input {
     background: rgba(15, 15, 15, 0.98);
-    padding: 8px 20px;
-    height: 20px;
+    padding: 8px 10px;
+    height: 10px;
     display: flex;
     align-items: center;
     position: relative;
