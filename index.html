@@ -75,9 +75,6 @@
                     <span class="key">ANY KEY</span> - Change selection
                 </div>
             </div>
-            <div class="key-binding-status" id="keyBindingStatus" style="display: none;">
-                <!-- Status will be shown here -->
-            </div>
         </div>
     </div>
 
@@ -540,11 +537,9 @@
         function showKeyBinding(message) {
             const overlay = document.getElementById('keyBindingOverlay');
             const inputEl = document.getElementById('keyBindingText');
-            const statusEl = document.getElementById('keyBindingStatus');
             
             if (overlay && inputEl) {
                 inputEl.textContent = message || 'Press key';
-                statusEl.style.display = 'none';
                 overlay.style.display = 'flex';
             }
         }
@@ -562,50 +557,15 @@
 
         function showKeySelection(key, value) {
             // Show key selection without auto-hiding (waiting for confirmation)
-            const statusEl = document.getElementById('keyBindingStatus');
             const inputEl = document.getElementById('keyBindingText');
             
-            if (statusEl && inputEl) {
+            if (inputEl) {
                 // Update input to show selected key
                 inputEl.textContent = key;
-                
-                // Show status without auto-hide
-                statusEl.innerHTML = `
-                    <div class="status-success">
-                        <i class="fa-solid fa-keyboard"></i>
-                        <span>Selected: <strong>${key}</strong> - Press ENTER to confirm</span>
-                    </div>
-                `;
-                statusEl.style.display = 'block';
             }
         }
 
-        function updateKeyBindingStatus(key, value, success) {
-            const statusEl = document.getElementById('keyBindingStatus');
-            if (statusEl) {
-                if (success) {
-                    statusEl.innerHTML = `
-                        <div class="status-success">
-                            <i class="fa-solid fa-check-circle"></i>
-                            <span>Key bound to: <strong>${key}</strong></span>
-                        </div>
-                    `;
-                } else {
-                    statusEl.innerHTML = `
-                        <div class="status-error">
-                            <i class="fa-solid fa-times-circle"></i>
-                            <span>Key binding cancelled</span>
-                        </div>
-                    `;
-                }
-                statusEl.style.display = 'block';
-                
-                // Auto-hide after 3 seconds
-                setTimeout(() => {
-                    hideKeyBinding();
-                }, 3000);
-            }
-        }
+
 
         function handleChangeMenuKey() {
             // Send message to Lua to start key binding
@@ -1143,21 +1103,20 @@
                     // Show key selection without auto-hiding (waiting for confirmation)
                     showKeySelection(data.key, data.value);
                 } else if (data.type === 'keyBindingComplete') {
+                    // Key binding completed - just hide the overlay after a delay
                     if (data.success) {
-                        updateKeyBindingStatus(data.key, data.value, true);
+                        setTimeout(() => {
+                            hideKeyBinding();
+                        }, 2000);
                     } else {
-                        updateKeyBindingStatus(null, null, false);
+                        hideKeyBinding();
                     }
                 } else if (data.type === 'keySelectionReset') {
                     // Reset key binding message to allow new key selection
                     const inputEl = document.getElementById('keyBindingText');
-                    const statusEl = document.getElementById('keyBindingStatus');
                     
                     if (inputEl) {
                         inputEl.textContent = 'Press key';
-                    }
-                    if (statusEl) {
-                        statusEl.style.display = 'none';
                     }
                 } else if (data.type === 'hideKeyBinding') {
                     hideKeyBinding();

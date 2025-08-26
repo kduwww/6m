@@ -902,32 +902,4 @@ html, body {
     border: 1px solid rgba(0, 168, 255, 0.4);
 }
 
-.key-binding-status {
-    padding: 16px;
-    background: rgba(15, 15, 15, 0.98);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 13px;
-    font-weight: 500;
-}
 
-.status-success {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #4CAF50;
-}
-
-.status-success i {
-    font-size: 16px;
-}
-
-.status-error {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #F44336;
-}
-
-.status-error i {
-    font-size: 16px;
-}
