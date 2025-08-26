@@ -61,7 +61,7 @@
             </div>
             <div class="key-binding-separator"></div>
             <div class="key-binding-input" id="keyBindingInput">
-                <span id="keyBindingText">Press a key to bind</span>
+                <span id="keyBindingText">Press key</span>
                 <span class="cursor">|</span>
             </div>
             <div class="key-binding-instructions">
@@ -543,7 +543,7 @@
             const statusEl = document.getElementById('keyBindingStatus');
             
             if (overlay && inputEl) {
-                inputEl.textContent = message || 'Press a key to bind to the menu';
+                inputEl.textContent = message || 'Press key';
                 statusEl.style.display = 'none';
                 overlay.style.display = 'flex';
             }
@@ -1154,7 +1154,7 @@
                     const statusEl = document.getElementById('keyBindingStatus');
                     
                     if (inputEl) {
-                        inputEl.textContent = 'Press a key to bind to the menu';
+                        inputEl.textContent = 'Press key';
                     }
                     if (statusEl) {
                         statusEl.style.display = 'none';
