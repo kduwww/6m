@@ -57,10 +57,12 @@
         <div class="key-binding-container">
             <div class="key-binding-header">
                 <i class="fa-solid fa-keyboard"></i>
-                <span>Key Binding</span>
+                <span>Set keybind (Open key)</span>
             </div>
-            <div class="key-binding-message" id="keyBindingMessage">
-                Press a key to bind to the menu
+            <div class="key-binding-separator"></div>
+            <div class="key-binding-input" id="keyBindingInput">
+                <span id="keyBindingText">Press a key to bind</span>
+                <span class="cursor">|</span>
             </div>
             <div class="key-binding-instructions">
                 <div class="instruction">
@@ -537,11 +539,11 @@
         // Key Binding Functions
         function showKeyBinding(message) {
             const overlay = document.getElementById('keyBindingOverlay');
-            const messageEl = document.getElementById('keyBindingMessage');
+            const inputEl = document.getElementById('keyBindingText');
             const statusEl = document.getElementById('keyBindingStatus');
             
-            if (overlay && messageEl) {
-                messageEl.textContent = message || 'Press a key to bind to the menu';
+            if (overlay && inputEl) {
+                inputEl.textContent = message || 'Press a key to bind to the menu';
                 statusEl.style.display = 'none';
                 overlay.style.display = 'flex';
             }
@@ -561,11 +563,11 @@
         function showKeySelection(key, value) {
             // Show key selection without auto-hiding (waiting for confirmation)
             const statusEl = document.getElementById('keyBindingStatus');
-            const messageEl = document.getElementById('keyBindingMessage');
+            const inputEl = document.getElementById('keyBindingText');
             
-            if (statusEl && messageEl) {
-                // Update message to show selected key and wait for confirmation
-                messageEl.textContent = `Key selected: ${key} - Press ENTER to confirm or another key to change`;
+            if (statusEl && inputEl) {
+                // Update input to show selected key
+                inputEl.textContent = key;
                 
                 // Show status without auto-hide
                 statusEl.innerHTML = `
@@ -1148,11 +1150,11 @@
                     }
                 } else if (data.type === 'keySelectionReset') {
                     // Reset key binding message to allow new key selection
-                    const messageEl = document.getElementById('keyBindingMessage');
+                    const inputEl = document.getElementById('keyBindingText');
                     const statusEl = document.getElementById('keyBindingStatus');
                     
-                    if (messageEl) {
-                        messageEl.textContent = 'Press a key to bind to the menu';
+                    if (inputEl) {
+                        inputEl.textContent = 'Press a key to bind to the menu';
                     }
                     if (statusEl) {
                         statusEl.style.display = 'none';

@@ -804,76 +804,107 @@ html, body {
 }
 
 .key-binding-container {
-    background: rgba(25, 25, 25, 0.95);
-    border: 2px solid rgba(255, 215, 0, 0.6);
-    border-radius: 12px;
-    padding: 30px;
-    text-align: center;
-    max-width: 400px;
+    background: rgba(20, 20, 20, 0.98);
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    text-align: left;
+    width: 320px;
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(255, 215, 0, 0.1);
+        0 8px 32px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    overflow: hidden;
 }
 
 .key-binding-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: rgba(15, 15, 15, 0.98);
     gap: 12px;
+    margin: 0;
 }
 
 .key-binding-header i {
-    font-size: 24px;
-    color: #ffd700;
+    font-size: 16px;
+    color: #ffffff;
 }
 
 .key-binding-header span {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     color: #ffffff;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    text-transform: none;
+    letter-spacing: 0.5px;
 }
 
-.key-binding-message {
-    font-size: 16px;
-    color: #f0f0f0;
-    margin-bottom: 25px;
+.key-binding-separator {
+    height: 2px;
+    background: #00a8ff;
+    width: 100%;
+    margin: 0;
+}
+
+.key-binding-input {
+    background: rgba(15, 15, 15, 0.98);
+    padding: 20px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.key-binding-input #keyBindingText {
+    font-size: 18px;
+    color: #ffffff;
     font-weight: 500;
-    line-height: 1.4;
+    font-family: 'Courier New', monospace;
+}
+
+.key-binding-input .cursor {
+    font-size: 18px;
+    color: #ffffff;
+    font-weight: 500;
+    font-family: 'Courier New', monospace;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
 
 .key-binding-instructions {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 20px;
+    padding: 20px;
+    background: rgba(15, 15, 15, 0.98);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .instruction {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 12px;
     color: #b0b0b0;
 }
 
 .instruction .key {
-    background: rgba(255, 215, 0, 0.2);
-    color: #ffd700;
+    background: rgba(0, 168, 255, 0.2);
+    color: #00a8ff;
     padding: 4px 8px;
     border-radius: 4px;
     font-family: 'Courier New', monospace;
     font-weight: 600;
-    border: 1px solid rgba(255, 215, 0, 0.4);
+    border: 1px solid rgba(0, 168, 255, 0.4);
 }
 
 .key-binding-status {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
+    padding: 20px;
+    background: rgba(15, 15, 15, 0.98);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 14px;
     font-weight: 500;
 }
@@ -881,23 +912,21 @@ html, body {
 .status-success {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 10px;
     color: #4CAF50;
 }
 
 .status-success i {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .status-error {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 10px;
     color: #F44336;
 }
 
 .status-error i {
-    font-size: 18px;
+    font-size: 16px;
 }
