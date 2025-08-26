@@ -790,7 +790,7 @@ html, body {
     height: 100vh !important;
     background: rgba(0, 0, 0, 0.8) !important; 
     display: none;
-    align-items: flex-end !important;
+    align-items: center !important;
     justify-content: center !important;
     z-index: 999999 !important;
     font-family: 'Roboto', sans-serif !important;
@@ -809,7 +809,10 @@ html, body {
     font-size: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.7);
     overflow: hidden;
-    margin-bottom: 50px;
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .key-binding-header {
