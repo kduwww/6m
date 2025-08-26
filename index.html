@@ -676,21 +676,21 @@
                 menuPath = ['HOME', 'SELF'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
-                updateSelection(currentIndex, currentMenuType);
+                updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'misc') {
                 currentMenuType = 'misc';
                 menuPath = ['HOME', 'MISCELLANEOUS'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
-                updateSelection(currentIndex, currentMenuType);
+                updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'settings') {
                 currentMenuType = 'settings';
                 menuPath = ['HOME', 'MENU SETTINGS', 'BANNER SETTINGS'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
-                updateSelection(currentIndex, currentMenuType);
+                updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
             } else if (selectedOption.action === 'default_style') {
                 resetToDefaultStyle();
