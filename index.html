@@ -229,19 +229,10 @@
                 // Resource menu rendering
                 if (currentMenuData.items && currentMenuData.items.length > 0) {
                     currentMenuData.items.forEach((item, index) => {
-                        const statusIcon = item.running ? 
-                            '<i class="fa-solid fa-play" style="color: #4CAF50;"></i>' : 
-                            '<i class="fa-solid fa-stop" style="color: #F44336;"></i>';
-                        const statusText = item.running ? 'RUNNING' : 'STOPPED';
-                        const statusColor = item.running ? '#4CAF50' : '#F44336';
-                        
                         itemsHtml += `
                             <div class="menu-item resource-item" data-index="${index}" data-resource="${item.name}">
                                 <div class="resource-info">
                                     <div class="resource-name">${item.name}</div>
-                                    <div class="resource-status" style="color: ${statusColor};">
-                                        ${statusIcon} ${statusText}
-                                    </div>
                                 </div>
                                 <div class="resource-controls">
                                     <span class="control-hint">← Stop | Start →</span>
