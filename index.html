@@ -120,6 +120,7 @@
                 items: [
                     { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint", tooltip: "Instantly teleport to your set waypoint on the map" },
                     { name: "Slide Mode", action: "slide_mode", type: "toggle", checked: false, icon: '<i class="fa-solid fa-person-running"></i>', desc: "Enable enhanced movement sliding", tooltip: "Activate slide mode for enhanced movement and sliding abilities" },
+                    { name: "Slide Speed", action: "slide_speed", type: "slider", value: 2.0, min: 0.5, max: 5.0, step: 0.1, icon: '<i class="fa-solid fa-tachometer-alt"></i>', desc: "Adjust slide mode speed multiplier", tooltip: "Control how fast the slide mode affects your movement" },
                 ]
             },
                     wardrobe: {
@@ -209,6 +210,19 @@
                                     </div>
                                 </div>
                             `;
+                        } else if (item.type === 'slider') {
+                            itemsHtml += `
+                                <div class="slider-item" data-index="${index}" data-action="${item.action}">
+                                    <div class="slider-info">
+                                        <div class="slider-icon">${item.icon}</div>
+                                        <div class="slider-text">${item.name}</div>
+                                    </div>
+                                    <div class="slider-controls">
+                                        <span class="slider-value">${item.value}</span>
+                                        <span class="slider-hint">← Decrease | Increase →</span>
+                                    </div>
+                                </div>
+                            `;
                         } else {
                             itemsHtml += `
                                 <div class="menu-item" data-index="${index}" data-action="${item.action}">
@@ -287,7 +301,7 @@
             
             highlightBar = document.querySelector('.highlight-bar');
 
-            const renderedItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item');
+            const renderedItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
             
             // Update custom scrollbar after rendering new items
             setTimeout(() => {
@@ -337,6 +351,13 @@
                                 itemData.checked ? 'Slide Mode Activated' : 'Slide Mode Deactivated',
                                 itemData.checked ? 'Enhanced movement sliding enabled!' : 'Enhanced movement sliding disabled.',
                                 itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
+                            );
+                        } else if (itemData.action === 'slide_speed') {
+                            // Handle slide speed slider (this will be handled by arrow keys)
+                            showNotification(
+                                'Slide Speed',
+                                `Current speed: ${itemData.value}x`,
+                                '<i class="fa-solid fa-tachometer-alt"></i>'
                             );
                         }
 
@@ -391,7 +412,7 @@
         }
 
         function updateSelection(index, menuType) {
-            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item');
+            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
             const totalItems = currentItems.length;
 
             // Remove selection from all items first
@@ -1155,6 +1176,17 @@
                         if (slideModeItem) {
                             slideModeItem.checked = data.enabled;
                             // Re-render the menu to show updated checkbox state
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'updateSlideSpeed') {
+                    // Update the slide speed value in the menu data
+                    if (currentMenuType === 'self' && menuData.self.tabs.miscellaneous) {
+                        const slideSpeedItem = menuData.self.tabs.miscellaneous.items.find(item => item.action === 'slide_speed');
+                        if (slideSpeedItem) {
+                            slideSpeedItem.value = data.speed;
+                            // Re-render the menu to show updated speed value
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
