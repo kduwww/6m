@@ -29,13 +29,20 @@
             </div>
 
             <div class="menu-footer">
-                <span class="version">Version: Beta | build: 4 | 24hrs ago | Created By luabyff</span>
+                <span class="version">Version: Beta | build: 5 | 24hrs ago | Created By luabyff</span>
                 <span class="counter" id="counter">1/9</span> 
             </div>
         </div>
     </div>
 
     <div class="notification-container" id="notificationContainer">
+    </div>
+
+    <!-- Tooltip System -->
+    <div class="tooltip" id="tooltip" style="display: none;">
+        <div class="tooltip-content" id="tooltipContent">
+            <!-- Tooltip text will be populated here -->
+        </div>
     </div>
 
     <!-- Spectators List UI -->
@@ -49,13 +56,6 @@
         <div class="spectators-separator"></div>
         <div class="spectators-list" id="spectatorsList">
             <!-- Spectator names will be populated here -->
-        </div>
-    </div>
-
-    <!-- Hint Tooltip -->
-    <div class="hint-tooltip" id="hintTooltip" style="display: none;">
-        <div class="hint-content" id="hintContent">
-            <!-- Hint text will be populated here -->
         </div>
     </div>
 
@@ -95,13 +95,13 @@
             main: {
                 title: 'HOME',
                 items: [
-                    { name: "Self", icon: '<i class="fa-solid fa-user"></i>', desc: "Player Options", action: "self" },
-                    { name: "Online", icon: '<i class="fa-solid fa-desktop"></i>', desc: "Online Features", action: "online" },
-                    { name: "Combat/Weapons", icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Weapon System", action: "combat" },
-                    { name: "Visual", icon: '<i class="fa-solid fa-eye"></i>', desc: "Visual Effects", action: "visual" },
-                    { name: "Vehicle", icon: '<i class="fa-solid fa-car"></i>', desc: "Vehicle Menu", action: "vehicle" },
-                    { name: "Destructive", icon: '<i class="fa-solid fa-bomb"></i>', desc: "Destruction Tools", action: "destructive" },
-                    { name: "Settings", icon: '<i class="fa-solid fa-gear"></i>', desc: "System Settings", action: "settings" }
+                    { name: "Self", icon: '<i class="fa-solid fa-user"></i>', desc: "Player Options", action: "self", tooltip: "Access player-specific settings like noclip, teleport, and wardrobe options" },
+                    { name: "Online", icon: '<i class="fa-solid fa-desktop"></i>', desc: "Online Features", action: "online", tooltip: "Manage online features and server interactions" },
+                    { name: "Combat/Weapons", icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Weapon System", action: "combat", tooltip: "Configure combat settings and weapon modifications" },
+                    { name: "Visual", icon: '<i class="fa-solid fa-eye"></i>', desc: "Visual Effects", action: "visual", tooltip: "Customize visual effects and graphics settings" },
+                    { name: "Vehicle", icon: '<i class="fa-solid fa-car"></i>', desc: "Vehicle Menu", action: "vehicle", tooltip: "Access vehicle spawning and modification options" },
+                    { name: "Destructive", icon: '<i class="fa-solid fa-bomb"></i>', desc: "Destruction Tools", action: "destructive", tooltip: "Use destructive tools and explosion effects" },
+                    { name: "Settings", icon: '<i class="fa-solid fa-gear"></i>', desc: "System Settings", action: "settings", tooltip: "Configure system settings and resource management" }
                 ]
             },
             self: {
@@ -112,20 +112,20 @@
                     player: {
                         title: 'Player',
                 items: [
-                    { name: "Noclip", action: "noclip_toggle", type: "toggle", checked: false },
+                    { name: "Noclip", action: "noclip_toggle", type: "toggle", checked: false, tooltip: "Enable noclip mode to walk through walls and objects" },
                 ]
                     },
                                 miscellaneous: {
                 title: 'Miscellaneous',
                 items: [
-                    { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint" },
-                    { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m" },
+                    { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint", tooltip: "Instantly teleport to your set waypoint on the map" },
+                    { name: "Spectators List", action: "spectators_list", type: "toggle", checked: false, icon: '<i class="fa-solid fa-eye"></i>', desc: "Detect nearby invisible players within 50m", tooltip: "Detect and display nearby invisible players within 50 meters" },
                 ]
             },
                     wardrobe: {
                         title: 'Wardrobe',
                         items: [
-                            { name: "OutFits", action: "outfits", type: "combo", value: "Random", options: ["Random", "Kkk", "nwwea"], icon: '<i class="fa-solid fa-shirt"></i>', desc: "Change Player Outfit" },
+                            { name: "OutFits", action: "outfits", type: "combo", value: "Random", options: ["Random", "Kkk", "nwwea"], icon: '<i class="fa-solid fa-shirt"></i>', desc: "Change Player Outfit", tooltip: "Change your character's appearance with preset outfits" },
                         ]
                     }
                 }
@@ -138,14 +138,14 @@
                     main: {
                         title: 'Main',
                 items: [
-                            { name: "Default Style", icon: '<i class="fa-solid fa-palette"></i>', desc: "Default Homer Atlas Style", action: "default_style" },
+                            { name: "Default Style", icon: '<i class="fa-solid fa-palette"></i>', desc: "Default Homer Atlas Style", action: "default_style", tooltip: "Reset menu to default Homer Atlas style and colors" },
                 ]
             },
                     server: {
                         title: 'Server',
                 items: [
-                            { name: "Resource", icon: '<i class="fa-solid fa-cube"></i>', desc: "Resource Management", action: "resource" },
-                            { name: "Triggers", icon: '<i class="fa-solid fa-bolt"></i>', desc: "Server Triggers", action: "triggers" },
+                            { name: "Resource", icon: '<i class="fa-solid fa-cube"></i>', desc: "Resource Management", action: "resource", tooltip: "Manage server resources - start, stop, and monitor server scripts" },
+                            { name: "Triggers", icon: '<i class="fa-solid fa-bolt"></i>', desc: "Server Triggers", action: "triggers", tooltip: "Access server trigger functions and events" },
                         ]
                     },
                     settings: {
@@ -304,6 +304,27 @@
             }, 10);
             
             renderedItems.forEach(itemElement => {
+                // Add tooltip functionality
+                const index = parseInt(itemElement.dataset.index);
+                let itemData;
+                if (menuData[currentMenuType].isTabbed) {
+                    const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
+                    itemData = currentTab.items[index];
+                } else {
+                    itemData = menuData[currentMenuType].items[index];
+                }
+
+                // Add tooltip events if tooltip exists
+                if (itemData && itemData.tooltip) {
+                    itemElement.addEventListener('mouseenter', function() {
+                        showTooltip(itemData.tooltip, this);
+                    });
+                    
+                    itemElement.addEventListener('mouseleave', function() {
+                        hideTooltip();
+                    });
+                }
+
                 itemElement.addEventListener('click', function() {
                     const index = parseInt(this.dataset.index);
                     const action = this.dataset.action;
@@ -479,36 +500,7 @@
 
             // This will be populated by Lua with actual invisible player data
             // For now, show a loading message
-            spectatorsList.innerHTML = '<div class="spectator-item" data-hint="Currently scanning the area for invisible players within 50m range"><div class="spectator-info"><span class="spectator-name">Scanning for invisible players...</span></div></div>';
-        }
-
-        // Hint functions
-        function showHint(text) {
-            const tooltip = document.getElementById('hintTooltip');
-            const content = document.getElementById('hintContent');
-            
-            if (tooltip && content) {
-                content.textContent = text;
-                tooltip.style.display = 'block';
-                
-                // Add visible class after a small delay for smooth animation
-                setTimeout(() => {
-                    tooltip.classList.add('visible');
-                }, 10);
-            }
-        }
-
-        function hideHint() {
-            const tooltip = document.getElementById('hintTooltip');
-            
-            if (tooltip) {
-                tooltip.classList.remove('visible');
-                
-                // Hide after animation completes
-                setTimeout(() => {
-                    tooltip.style.display = 'none';
-                }, 300);
-            }
+            spectatorsList.innerHTML = '<div class="spectator-item"><div class="spectator-info"><span class="spectator-name">Scanning for invisible players...</span></div></div>';
         }
 
         function populateSpectatorsList(spectators) {
@@ -524,7 +516,7 @@
             console.log('Populating spectators list with', spectators.length, 'players');
 
             if (spectators.length === 0) {
-                spectatorsList.innerHTML = '<div class="spectator-item" data-hint="No invisible players currently detected in the area">No Admin</div>';
+                spectatorsList.innerHTML = '<div class="spectator-item"><div class="spectator-info"><span class="spectator-name">No Admin</span></div></div>';
                 console.log('Spectators list cleared - no players detected');
                 return;
             }
@@ -536,11 +528,8 @@
                 const type = spectator.type || '';
                 const distance = spectator.distance ? Math.round(spectator.distance) : 0;
                 
-                // Create hint text for each spectator
-                const hintText = `Player: ${spectator.name} | Type: ${type} | Distance: ${distance}m | Status: Invisible`;
-                
                 html += `
-                    <div class="spectator-item ${isSelected ? 'selected' : ''}" data-index="${index}" data-hint="${hintText}">
+                    <div class="spectator-item ${isSelected ? 'selected' : ''}" data-index="${index}">
                         <div class="spectator-info">
                             ${tag ? `<span class="spectator-tag">${tag}</span>` : ''}
                             <span class="spectator-name">${spectator.name}</span>
@@ -552,7 +541,7 @@
 
             spectatorsList.innerHTML = html;
 
-            // Add click handlers and hover events for spectator items
+            // Add click handlers for spectator items
             const spectatorItems = spectatorsList.querySelectorAll('.spectator-item');
             spectatorItems.forEach((item, index) => {
                 item.addEventListener('click', function() {
@@ -560,18 +549,6 @@
                     spectatorItems.forEach(i => i.classList.remove('selected'));
                     // Add selection to clicked item
                     this.classList.add('selected');
-                });
-
-                // Add hover events for hints
-                item.addEventListener('mouseenter', function() {
-                    const hint = this.getAttribute('data-hint');
-                    if (hint) {
-                        showHint(hint);
-                    }
-                });
-
-                item.addEventListener('mouseleave', function() {
-                    hideHint();
                 });
             });
         }
@@ -597,6 +574,37 @@
                 overlay.style.opacity = '0';
                 overlay.classList.remove('visible');
                 console.log('🔑 Key binding overlay hidden');
+            }
+        }
+
+        // Tooltip Functions
+        function showTooltip(text, element) {
+            const tooltip = document.getElementById('tooltip');
+            const tooltipContent = document.getElementById('tooltipContent');
+            
+            if (tooltip && tooltipContent) {
+                tooltipContent.textContent = text;
+                tooltip.style.display = 'block';
+                
+                // Position tooltip near the element
+                const rect = element.getBoundingClientRect();
+                tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                tooltip.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+                
+                // Show with animation
+                setTimeout(() => {
+                    tooltip.classList.add('visible');
+                }, 10);
+            }
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip) {
+                tooltip.classList.remove('visible');
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                }, 300);
             }
         }
 

@@ -781,8 +781,8 @@ html, body {
     text-align: right;
 }
 
-/* Hint Tooltip Styles */
-.hint-tooltip {
+/* Tooltip Styles */
+.tooltip {
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -796,14 +796,15 @@ html, body {
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.3s ease;
+    pointer-events: none;
 }
 
-.hint-tooltip.visible {
+.tooltip.visible {
     opacity: 1;
     transform: translateY(0);
 }
 
-.hint-content {
+.tooltip-content {
     color: #ffffff;
     font-family: 'Roboto', sans-serif;
     font-size: 12px;
