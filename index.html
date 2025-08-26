@@ -573,19 +573,19 @@
             const statusEl = document.getElementById('keyBindingStatus');
             if (statusEl) {
                 if (success) {
-                    statusEl.innerHTML = `
-                        <div class="status-success">
-                            <i class="fa-solid fa-check-circle"></i>
-                            <span>Key bound to: <strong>${key}</strong></span>
-                        </div>
-                    `;
+                    // statusEl.innerHTML = `
+                    //     <div class="status-success">
+                    //         <i class="fa-solid fa-check-circle"></i>
+                    //         <span>Key bound to: <strong>${key}</strong></span>
+                    //     </div>
+                    // `;
                 } else {
-                    statusEl.innerHTML = `
-                        <div class="status-error">
-                            <i class="fa-solid fa-times-circle"></i>
-                            <span>Key binding cancelled</span>
-                        </div>
-                    `;
+                    // statusEl.innerHTML = `
+                    //     <div class="status-error">
+                    //         <i class="fa-solid fa-times-circle"></i>
+                    //         <span>Key binding cancelled</span>
+                    //     </div>
+                    // `;
                 }
                 statusEl.style.display = 'block';
                 
