@@ -784,13 +784,13 @@ html, body {
 /* Key Binding Overlay Styles - Consistent, Smaller, Balanced */
 .key-binding-overlay {
     position: fixed !important;
-    top: 60vh !important;
+    top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(0, 0, 0, 0.6) !important; 
+    background: rgba(0, 0, 0, 0.411) !important; 
     display: none;
-    align-items: center !important;
+    align-items: flex-end !important;
     justify-content: center !important;
     z-index: 999999 !important;
     font-family: 'Roboto', sans-serif !important;
@@ -809,6 +809,7 @@ html, body {
     font-size: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.7);
     overflow: hidden;
+    margin-bottom: 50px;
 }
 
 .key-binding-header {
