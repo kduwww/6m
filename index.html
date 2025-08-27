@@ -138,7 +138,8 @@
                     weapon_spawner: {
                         title: 'Weapon Spawner',
                         items: [
-                            { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" }
+                            { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
+                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" }
                         ]
                     },
                     weapon: {
@@ -406,6 +407,17 @@
                             // This ensures the weapons function is called immediately
                             setTimeout(() => {
                                 // Send enter message to trigger weapons
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'remove_all_weapons') {
+                            // For remove weapons, select the item and immediately trigger remove
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger remove weapons
+                            // This ensures the remove weapons function is called immediately
+                            setTimeout(() => {
+                                // Send enter message to trigger remove weapons
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
