@@ -156,6 +156,12 @@
                     }
                 }
             },
+            combat: {
+                title: 'COMBAT/WEAPONS',
+                items: [
+                    { name: "Give All Weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", action: "give_all_weapons", tooltip: "Receive all weapons with 9999 ammo for each" }
+                ]
+            },
             resources: {
                 title: 'RESOURCES',
                 items: [], // Will be populated dynamically
@@ -704,6 +710,13 @@
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
+            } else if (menuType === 'main' && selectedOption.action === 'combat') {
+                currentMenuType = 'combat';
+                menuPath = ['HOME', 'COMBAT/WEAPONS'];
+                updateBreadcrumb();
+                renderMenuItems(currentMenuType);
+                updateSelection(0, currentMenuType);
+                updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'misc') {
                 currentMenuType = 'misc';
                 menuPath = ['HOME', 'MISCELLANEOUS'];
@@ -819,7 +832,7 @@
         }
 
         function navigateBack() {
-            if (currentMenuType === 'self' || currentMenuType === 'settings' || currentMenuType === 'misc') {
+            if (currentMenuType === 'self' || currentMenuType === 'settings' || currentMenuType === 'misc' || currentMenuType === 'combat') {
                 const previousMenu = currentMenuType;
                 currentMenuType = 'main';
                 menuPath = ['HOME'];
