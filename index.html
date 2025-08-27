@@ -121,7 +121,7 @@
                     { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint", tooltip: "Instantly teleport to your set waypoint on the map" },
                     { name: "Slide Mode", action: "slide_mode", type: "slider", checked: false, value: 10.0, min: 1.0, max: 20.0, step: 0.1, icon: '<i class="fa-solid fa-person-running"></i>', desc: "Enable enhanced movement sliding", tooltip: "Activate slide mode for enhanced movement and sliding abilities" },
                 ]
-                    },
+            },
                     wardrobe: {
                         title: 'Wardrobe',
                         items: [
@@ -202,7 +202,7 @@
                                 <div class="slider-item" data-index="${index}" data-action="${item.action}">
                                     <div class="slider-info">
                                         <div class="slider-icon">${item.icon}</div>
-                                        <div class="slider-text">Slide speed: ${item.value.toFixed(1)}</div>
+                                        <div class="slider-text">Slide Mode</div>
                                     </div>
                                     <div class="slider-controls">
                                         <div class="slider-track">
@@ -211,6 +211,7 @@
                                         </div>
                                         <div class="toggle-switch ${item.checked ? 'on' : 'off'}"></div>
                                     </div>
+
                                 </div>
                             `;
                         } else if (item.type === 'combo') {
