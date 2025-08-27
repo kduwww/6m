@@ -1180,6 +1180,17 @@
                             updateSelection(currentIndex, currentMenuType);
                         }
                     }
+                } else if (data.type === 'toggleNoclip') {
+                    // Update the checkbox state in the menu data for noclip
+                    if (currentMenuType === 'self' && menuData.self.tabs.player) {
+                        const noclipItem = menuData.self.tabs.player.items.find(item => item.action === 'noclip_toggle');
+                        if (noclipItem) {
+                            noclipItem.checked = data.enabled;
+                            // Re-render the menu to show updated checkbox state
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
                 } else if (data.type === 'updateSlideSpeed') {
                     // Update the slide speed value in the menu data
                     if (currentMenuType === 'self' && menuData.self.tabs.miscellaneous) {
