@@ -132,9 +132,28 @@
             },
             combat: {
                 title: 'Combat/Weapons',
-                items: [
-                    { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" }
-                ]
+                isTabbed: true,
+                currentTab: 'weapon_spawner',
+                tabs: {
+                    weapon_spawner: {
+                        title: 'Weapon Spawner',
+                        items: [
+                            { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" }
+                        ]
+                    },
+                    weapon: {
+                        title: 'Weapon',
+                        items: [
+                            { name: "Weapon Options", action: "weapon_options", icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Weapon Management", tooltip: "Access weapon management and combat options" }
+                        ]
+                    },
+                    fun: {
+                        title: 'Fun',
+                        items: [
+                            { name: "Fun Features", action: "fun_features", icon: '<i class="fa-solid fa-star"></i>', desc: "Fun and entertainment features", tooltip: "Access fun and entertainment features" }
+                        ]
+                    }
+                }
             },
             settings: {
                 title: 'MAIN > MENU SETTINGS > BANNER SETTINGS',
@@ -481,6 +500,11 @@
                 updateScrollbarIndicator();
             } else if (currentMenuType === 'self' && menuData.self.tabs[tabKey]) {
                 menuData.self.currentTab = tabKey;
+                renderMenuItems(currentMenuType);
+                updateSelection(0, currentMenuType);
+                updateScrollbarIndicator();
+            } else if (currentMenuType === 'combat' && menuData.combat.tabs[tabKey]) {
+                menuData.combat.currentTab = tabKey;
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
@@ -1144,7 +1168,7 @@
                         showNotification('Teleport Failed', 'No waypoint set on map!', '<i class="fa-solid fa-exclamation-triangle"></i>');
                     }
                 } else if (data.type === 'switchTab') {
-                    if ((currentMenuType === 'settings' || currentMenuType === 'self') && data.tab) {
+                    if ((currentMenuType === 'settings' || currentMenuType === 'self' || currentMenuType === 'combat') && data.tab) {
                         switchTab(data.tab);
                     }
                 } else if (data.type === 'enter') {
