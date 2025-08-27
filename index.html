@@ -130,6 +130,12 @@
                     }
                 }
             },
+            combat: {
+                title: 'Combat/Weapons',
+                items: [
+                    { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" }
+                ]
+            },
             settings: {
                 title: 'MAIN > MENU SETTINGS > BANNER SETTINGS',
                 isTabbed: true,
@@ -155,12 +161,6 @@
                         ]
                     }
                 }
-            },
-            combat: {
-                title: 'COMBAT/WEAPONS',
-                items: [
-                    { name: "Give All Weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", action: "give_all_weapons", tooltip: "Receive all weapons with 9999 ammo for each" }
-                ]
             },
             resources: {
                 title: 'RESOURCES',
@@ -376,6 +376,17 @@
                             // This ensures the teleport function is called immediately
                             setTimeout(() => {
                                 // Send enter message to trigger teleport
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'give_all_weapons') {
+                            // For weapons, select the item and immediately trigger weapons
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger weapons
+                            // This ensures the weapons function is called immediately
+                            setTimeout(() => {
+                                // Send enter message to trigger weapons
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -710,16 +721,16 @@
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
-            } else if (menuType === 'main' && selectedOption.action === 'combat') {
-                currentMenuType = 'combat';
-                menuPath = ['HOME', 'COMBAT/WEAPONS'];
+            } else if (menuType === 'main' && selectedOption.action === 'misc') {
+                currentMenuType = 'misc';
+                menuPath = ['HOME', 'MISCELLANEOUS'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
-            } else if (menuType === 'main' && selectedOption.action === 'misc') {
-                currentMenuType = 'misc';
-                menuPath = ['HOME', 'MISCELLANEOUS'];
+            } else if (menuType === 'main' && selectedOption.action === 'combat') {
+                currentMenuType = 'combat';
+                menuPath = ['HOME', 'COMBAT/WEAPONS'];
                 updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
@@ -832,7 +843,7 @@
         }
 
         function navigateBack() {
-            if (currentMenuType === 'self' || currentMenuType === 'settings' || currentMenuType === 'misc' || currentMenuType === 'combat') {
+            if (currentMenuType === 'self' || currentMenuType === 'combat' || currentMenuType === 'settings' || currentMenuType === 'misc') {
                 const previousMenu = currentMenuType;
                 currentMenuType = 'main';
                 menuPath = ['HOME'];
