@@ -121,7 +121,7 @@
                     { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint", tooltip: "Instantly teleport to your set waypoint on the map" },
                     { name: "Slide Mode", action: "slide_mode", type: "slider", checked: false, value: 10.0, min: 1.0, max: 20.0, step: 0.1, icon: '<i class="fa-solid fa-person-running"></i>', desc: "Enable enhanced movement sliding", tooltip: "Activate slide mode for enhanced movement and sliding abilities" },
                 ]
-            },
+                    },
                     wardrobe: {
                         title: 'Wardrobe',
                         items: [
@@ -407,7 +407,7 @@
         }
 
         function updateSelection(index, menuType) {
-            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item');
+            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
             const totalItems = currentItems.length;
 
             // Remove selection from all items first
@@ -885,7 +885,7 @@
         }
 
         function updateScrollbarIndicator() {
-            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .back-arrow-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item');
+            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .back-arrow-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
             const scrollbarIndicator = document.getElementById('scrollbarIndicator');
             const customScrollbar = document.querySelector('.custom-scrollbar');
             const menuItems = document.getElementById('menuItemsContainer');
@@ -1054,7 +1054,7 @@
                 } else if (data.type === 'selectEffect') {
                     selectEffect(currentIndex, currentMenuType);
                 } else if (data.type === 'moveUp') {
-                    const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item');
+                    const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
                     if (currentItems.length > 0) {
                         currentIndex = (currentIndex - 1 + currentItems.length) % currentItems.length;
                         updateSelection(currentIndex, currentMenuType);
@@ -1064,7 +1064,7 @@
                         }, 50);
                     }
                 } else if (data.type === 'moveDown') {
-                    const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item');
+                    const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
                     if (currentItems.length > 0) {
                         currentIndex = (currentIndex + 1) % currentItems.length;
                         updateSelection(currentIndex, currentMenuType);
