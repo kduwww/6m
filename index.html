@@ -143,10 +143,10 @@
                             { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
                             { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
                             { name: "Pickup", action: "toggle_pickup_weapons", type: "toggle", checked: false, desc: "Spawn weapons as pickups", tooltip: "Toggle between giving weapons directly or spawning as pickups" },
-                            { name: "Melee", action: "spawn_melee_weapons", type: "combo", value: "Melee", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-sword"></i>', desc: "Spawn melee weapons", tooltip: "Spawn all melee weapons (knives, bats, etc.)" },
-                            { name: "Handguns", action: "spawn_handgun_weapons", type: "combo", value: "Handguns", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn handgun weapons", tooltip: "Spawn all handgun weapons (pistols, revolvers, etc.)" },
-                            { name: "SMG", action: "spawn_smg_weapons", type: "combo", value: "SMG", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn SMG weapons", tooltip: "Spawn all SMG weapons (submachine guns)" },
-                            { name: "Rifles", action: "spawn_rifle_weapons", type: "combo", value: "Rifles", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn rifle weapons", tooltip: "Spawn all rifle weapons (assault rifles, snipers, etc.)" }
+                            { name: "Dagger", action: "spawn_individual_weapon", type: "combo", value: "Melee", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-sword"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" },
+                            { name: "Pistol", action: "spawn_individual_weapon", type: "combo", value: "Handguns", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" },
+                            { name: "SMG", action: "spawn_individual_weapon", type: "combo", value: "SMG", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" },
+                            { name: "Rifle", action: "spawn_individual_weapon", type: "combo", value: "Rifles", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" }
                         ]
                     },
                     weapon: {
@@ -439,42 +439,12 @@
                                     type: 'enter'
                                 }, '*');
                             }, 50);
-                        } else if (itemData.action === 'spawn_melee_weapons') {
-                            // For melee weapons, select the item and immediately trigger melee weapons
+                        } else if (itemData.action === 'spawn_individual_weapon') {
+                            // For individual weapon spawning, select the item and immediately trigger weapon spawn
                             updateSelection(index, currentMenuType);
-                            // Simulate pressing Enter to trigger melee weapons
+                            // Simulate pressing Enter to trigger individual weapon spawn
                             setTimeout(() => {
-                                // Send enter message to trigger melee weapons
-                                window.postMessage({
-                                    type: 'enter'
-                                }, '*');
-                            }, 50);
-                        } else if (itemData.action === 'spawn_handgun_weapons') {
-                            // For handgun weapons, select the item and immediately trigger handgun weapons
-                            updateSelection(index, currentMenuType);
-                            // Simulate pressing Enter to trigger handgun weapons
-                            setTimeout(() => {
-                                // Send enter message to trigger handgun weapons
-                                window.postMessage({
-                                    type: 'enter'
-                                }, '*');
-                            }, 50);
-                        } else if (itemData.action === 'spawn_smg_weapons') {
-                            // For SMG weapons, select the item and immediately trigger SMG weapons
-                            updateSelection(index, currentMenuType);
-                            // Simulate pressing Enter to trigger SMG weapons
-                            setTimeout(() => {
-                                // Send enter message to trigger SMG weapons
-                                window.postMessage({
-                                    type: 'enter'
-                                }, '*');
-                            }, 50);
-                        } else if (itemData.action === 'spawn_rifle_weapons') {
-                            // For rifle weapons, select the item and immediately trigger rifle weapons
-                            updateSelection(index, currentMenuType);
-                            // Simulate pressing Enter to trigger rifle weapons
-                            setTimeout(() => {
-                                // Send enter message to trigger rifle weapons
+                                // Send enter message to trigger individual weapon spawn
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1332,13 +1302,24 @@
                     // Update the weapon category in the menu data
                     if (currentMenuType === 'combat' && menuData.combat.tabs.weapon_spawner) {
                         const weaponItems = menuData.combat.tabs.weapon_spawner.items.filter(item => 
-                            item.action === 'spawn_melee_weapons' || 
-                            item.action === 'spawn_handgun_weapons' || 
-                            item.action === 'spawn_smg_weapons' || 
-                            item.action === 'spawn_rifle_weapons'
+                            item.action === 'spawn_individual_weapon'
                         );
                         weaponItems.forEach(item => {
                             item.value = data.category;
+                            // Update the weapon name based on category
+                            if (data.category === 'Melee') {
+                                item.name = 'Dagger';
+                                item.icon = '<i class="fa-solid fa-sword"></i>';
+                            } else if (data.category === 'Handguns') {
+                                item.name = 'Pistol';
+                                item.icon = '<i class="fa-solid fa-gun"></i>';
+                            } else if (data.category === 'SMG') {
+                                item.name = 'SMG';
+                                item.icon = '<i class="fa-solid fa-gun"></i>';
+                            } else if (data.category === 'Rifles') {
+                                item.name = 'Rifle';
+                                item.icon = '<i class="fa-solid fa-gun"></i>';
+                            }
                         });
                         // Re-render the menu to show updated category
                         renderMenuItems(currentMenuType);
