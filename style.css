@@ -904,7 +904,7 @@ html, body {
     text-align: center;
 }
 
-/* Key Binding Overlay Styles - Consistent, Smaller, Balanced */
+/* Key Binding Overlay Styles - New Modern Design */
 .key-binding-overlay {
     position: fixed !important;
     top: 0 !important;
@@ -917,110 +917,73 @@ html, body {
     justify-content: center !important;
     padding-bottom: 25vh !important;
     z-index: 999999 !important;
-    font-family: 'Roboto', sans-serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
 }
 
 .key-binding-overlay.visible {
     display: flex !important;
 }
 
-.key-binding-container {
-    background: rgba(10, 10, 10, 0.92);
-    border-radius: 4px;
-    padding: 0;
-    width: 340px;
-    color: #fff;
-    font-size: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.7);
+.keybind-container {
+    width: 90%;
+    max-width: 600px;
+    background-color: #1a1e22;
+    border-radius: 6px;
     overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    border: 1px solid #333a40;
+    transition: all 0.3s ease-in-out;
+    margin-top: 68vh;
 }
 
-.key-binding-header {
-    padding: 5px 14px;
-    background: rgba(15, 15, 15, 0.98);
-    font-weight: 500;
-    font-size: 12px;
-    color: #fff;
+.header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    padding: 6px 10px;
+    background-color: #212529;
+    border-bottom: 1px solid #333a40;
 }
 
-.key-binding-header i {
-    font-size: 14px;
-    color: #ffffff;
+.icon {
+    width: 16px;
+    height: 16px;
+    fill: #c9d1d9;
+    margin-right: 6px;
 }
 
-.key-binding-header span {
+.label {
     font-size: 12px;
-    font-weight: 600;
-    color: #ffffff;
-    letter-spacing: 0.2px;
+    font-weight: 500;
+    color: #c9d1d9;
 }
 
-.key-binding-separator {
-    height: 2px;
-    background: #00a8ff;
-    width: 100%;
-}
-
-.key-binding-input {
-    background: rgba(10, 10, 10, 0.93);
-    padding: 7px 14px;
-    font-size: 11px;
-    color: #fff;
-    font-family: 'Courier New', monospace;
+.input-field {
+    height: 30px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    padding: 0 10px;
+    background-color: #1a1e22;
+    border: 1px solid #007bff;
+    box-sizing: border-box;
+    cursor: pointer;
 }
 
-.key-binding-input #keyBindingText {
-    font-size: 11px;
-    color: #ffffff;
-    font-weight: 500;
-    font-family: 'Courier New', monospace;
-}
-
-.key-binding-input .cursor {
-    font-size: 11px;
-    color: #ffffff;
-    font-weight: 500;
-    font-family: 'Courier New', monospace;
-    animation: blink 1s infinite;
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 16px;
+    background-color: #ffffff;
+    animation: blink 1s infinite steps(1, end);
 }
 
 @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+    50% { opacity: 0; }
 }
 
-.key-binding-instructions {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 10px 14px;
-    background: rgba(15, 15, 15, 0.98);
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.instruction {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: #b0b0b0;
-}
-
-.instruction .key {
-    background: rgba(0, 168, 255, 0.18);
-    color: #00a8ff;
-    padding: 2px 7px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
+.key-text {
+    font-size: 14px;
     font-weight: 600;
-    border: 1px solid rgba(0, 168, 255, 0.32);
-    font-size: 11px;
+    color: #ffffff;
 }
 
 
