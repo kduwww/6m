@@ -146,7 +146,8 @@
                             { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
                             { name: "Melee Weapons", action: "spawn_melee", type: "combo", value: "Knife", options: ["Knife", "Baseball Bat", "Crowbar", "Hammer", "Hatchet", "Machete", "Switchblade", "Nightstick", "Wrench", "Battleaxe", "Pool Cue", "Stone Hatchet", "Dagger", "Bottle", "Golf Club", "Knuckle"], icon: '<i class="fa-solid fa-fist-raised"></i>', desc: "Spawn melee weapons", tooltip: "Choose and spawn a specific melee weapon" },
                             { name: "Handguns", action: "spawn_handgun", type: "combo", value: "Pistol", options: ["Pistol", "Pistol MK2", "Combat Pistol", "AP Pistol", "Stun Gun", "Pistol .50", "SNS Pistol", "SNS Pistol MK2", "Heavy Pistol", "Vintage Pistol", "Flare Gun", "Marksman Pistol", "Revolver", "Revolver MK2", "Double Action", "Ray Pistol", "Ceramic Pistol", "Navy Revolver"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn handguns", tooltip: "Choose and spawn a specific handgun" },
-                            { name: "Rifles", action: "spawn_rifle", type: "combo", value: "Assault Rifle", options: ["Assault Rifle", "Assault Rifle MK2", "Carbine Rifle", "Carbine Rifle MK2", "Advanced Rifle", "Special Carbine", "Special Carbine MK2", "Bullpup Rifle", "Bullpup Rifle MK2", "Compact Rifle", "MG", "Combat MG", "Combat MG MK2", "Gusenberg Sweeper", "Sniper Rifle", "Heavy Sniper", "Heavy Sniper MK2", "Marksman Rifle", "Marksman Rifle MK2"], icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Spawn rifles", tooltip: "Choose and spawn a specific rifle" }
+                            { name: "Rifles", action: "spawn_rifle", type: "combo", value: "Assault Rifle", options: ["Assault Rifle", "Assault Rifle MK2", "Carbine Rifle", "Carbine Rifle MK2", "Advanced Rifle", "Special Carbine", "Special Carbine MK2", "Bullpup Rifle", "Bullpup Rifle MK2", "Compact Rifle", "MG", "Combat MG", "Combat MG MK2", "Gusenberg Sweeper", "Sniper Rifle", "Heavy Sniper", "Heavy Sniper MK2", "Marksman Rifle", "Marksman Rifle MK2"], icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Spawn rifles", tooltip: "Choose and spawn a specific rifle" },
+                            { name: "SMGs", action: "spawn_smg", type: "combo", value: "Micro SMG", options: ["Micro SMG", "SMG", "SMG MK2", "Assault SMG", "Combat PDW", "Machine Pistol", "Mini SMG", "Ray Carbine"], icon: '<i class="fa-solid fa-bolt"></i>', desc: "Spawn SMGs", tooltip: "Choose and spawn a specific SMG" }
                         ]
                     },
                     weapon: {
@@ -497,6 +498,16 @@
                             // Simulate pressing Enter to trigger rifle spawn
                             setTimeout(() => {
                                 // Send enter message to trigger rifle spawn
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_smg') {
+                            // For SMG, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger SMG spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger SMG spawn
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1303,6 +1314,16 @@
                         const rifleItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_rifle');
                         if (rifleItem) {
                             rifleItem.value = data.weapon;
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'changeSMG') {
+                    if (data.weapon && currentMenuType === 'combat') {
+                        // Update SMG selection locally (just visual change)
+                        const smgItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_smg');
+                        if (smgItem) {
+                            smgItem.value = data.weapon;
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
