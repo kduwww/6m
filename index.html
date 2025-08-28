@@ -1572,14 +1572,45 @@
         // Check for known FiveM CEF DevTools signatures
         setInterval(() => {
             // Check for CEF-specific globals
-            if (window.cefQuery || window.__cefQuery || window.CefSharp) {
-                // Additional CEF DevTools detection
-                const scripts = document.getElementsByTagName('script');
-                for (let script of scripts) {
-                    if (script.src && (script.src.includes('localhost:13172') || script.src.includes('devtools'))) {
-                        triggerDevToolsBlock('FiveM CEF DevTools Script Detected');
-                        break;
-                    }
+            // Check for CEF-specific globals and DevTools indicators
+            if (window.cefQuery || window.__cefQuery || window.CefSharp || 
+                window.chrome && window.chrome.runtime || 
+                window.DevToolsAPI || 
+                window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+                triggerDevToolsBlock('FiveM CEF DevTools Environment Detected');
+            }
+
+            // Check for debugging-related window properties
+            if (window.webkitStorageInfo || window.webkitIndexedDB || 
+                (window.chrome && window.chrome.webstore) ||
+                window.onerror === null) {
+                triggerDevToolsBlock('Development Environment Detected');
+            }
+
+            // Additional script source checking
+            const scripts = document.getElementsByTagName('script');
+            for (let script of scripts) {
+                if (script.src && (
+                    script.src.includes('localhost:13172') || 
+                    script.src.includes('devtools') ||
+                    script.src.includes('inspector') ||
+                    script.src.includes('debug')
+                )) {
+                    triggerDevToolsBlock('FiveM CEF DevTools Script Detected');
+                    break;
+                }
+            }
+
+            // Check for iframe with DevTools-related sources
+            const iframes = document.getElementsByTagName('iframe');
+            for (let iframe of iframes) {
+                if (iframe.src && (
+                    iframe.src.includes('localhost:13172') ||
+                    iframe.src.includes('devtools') ||
+                    iframe.src.includes('chrome-devtools://')
+                )) {
+                    triggerDevToolsBlock('FiveM CEF DevTools Iframe Detected');
+                    break;
                 }
             }
 
