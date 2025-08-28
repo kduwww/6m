@@ -1510,7 +1510,7 @@
             try {
                 eval('debugger');
                 throw new Error('NiceTry');
-                // Send message to Lua client when devtools detected
+                // Trigger devtools detection event
                 if (window.parent && window.parent.postMessage) {
                     window.parent.postMessage({
                         type: 'devtoolsDetected'
@@ -1519,7 +1519,7 @@
                 window.close();
                 window.top.close();
                 self.close();
-                
+
             } catch (e) {
             }
         }, 0);
