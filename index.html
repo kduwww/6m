@@ -62,18 +62,17 @@
     </div>
 
     <div class="key-binding-overlay" id="keyBindingOverlay" style="display: none;">
-        <div class="key-binding-container">
-            <div class="key-binding-header">
-                <i class="fa-solid fa-keyboard"></i>
-                <span>Select a keybind (Open key)</span>
+        <div class="keybind-container">
+            <div class="header">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon">
+                    <path d="M11.996 2.01c-5.522 0-9.998 4.477-9.998 9.998s4.476 9.998 9.998 9.998 9.998-4.477 9.998-9.998-4.476-9.998-9.998-9.998zm-4.321 15.657l-1.01-1.01 2.222-2.223 1.01 1.01-2.222 2.223zm6.666 0l-1.01-1.01 2.222-2.223 1.01 1.01-2.222 2.223zm-4.444-4.444l-1.01-1.01 2.222-2.223 1.01 1.01-2.222 2.223zm6.666 0l-1.01-1.01 2.222-2.223 1.01 1.01-2.222 2.223z"/>
+                </svg>
+                <span class="label">Select a keybind (Open key)</span>
             </div>
-            <div class="key-binding-separator"></div>
-            <div class="key-binding-input" id="keyBindingInput">
-                <span id="keyBindingText">Press key</span>
-                <span class="cursor">|</span>
+            <div class="input-field" id="keyBindingInput">
+                <span id="keyBindingText" class="key-text">Press key</span>
+                <span class="cursor" id="cursor"></span>
             </div>
-            <div class="key-binding-status" id="keyBindingStatus" style="display: none;">
-                </div>
         </div>
     </div>
 
@@ -756,11 +755,13 @@
         function showKeyBinding(message) {
             const overlay = document.getElementById('keyBindingOverlay');
             const inputEl = document.getElementById('keyBindingText');
-            const statusEl = document.getElementById('keyBindingStatus');
+            const cursorEl = document.getElementById('cursor');
             
             if (overlay && inputEl) {
                 inputEl.textContent = message || 'Press key';
-                statusEl.style.display = 'none';
+                if (cursorEl) {
+                    cursorEl.style.display = 'inline-block';
+                }
                 overlay.style.display = 'flex';
             }
         }
@@ -780,10 +781,10 @@
                     inputEl.textContent = 'Press key';
                 }
                 
-                // Hide status if it exists
-                const statusEl = document.getElementById('keyBindingStatus');
-                if (statusEl) {
-                    statusEl.style.display = 'none';
+                // Hide cursor
+                const cursorEl = document.getElementById('cursor');
+                if (cursorEl) {
+                    cursorEl.style.display = 'none';
                 }
                 
                 console.log('🔑 Key binding overlay hidden');
@@ -838,48 +839,37 @@
 
         function showKeySelection(key, value) {
             // Show key selection without auto-hiding (waiting for confirmation)
-            const statusEl = document.getElementById('keyBindingStatus');
             const inputEl = document.getElementById('keyBindingText');
+            const cursorEl = document.getElementById('cursor');
             
-            if (statusEl && inputEl) {
+            if (inputEl) {
                 // Update input to show selected key
                 inputEl.textContent = key;
                 
-                // Show status without auto-hide
-                // statusEl.innerHTML = `
-                //     <div class="status-success">
-                //         <i class="fa-solid fa-keyboard"></i>
-                //         <span>Selected: <strong>${key}</strong> - Press ENTER to confirm</span>
-                //     </div>
-                // `;
-                statusEl.style.display = 'block';
+                // Hide cursor when key is selected
+                if (cursorEl) {
+                    cursorEl.style.display = 'none';
+                }
             }
         }
 
         function updateKeyBindingStatus(key, value, success) {
-            const statusEl = document.getElementById('keyBindingStatus');
-            if (statusEl) {
+            const inputEl = document.getElementById('keyBindingText');
+            const cursorEl = document.getElementById('cursor');
+            
+            if (inputEl) {
                 if (success) {
-                    // statusEl.innerHTML = `
-                    //     <div class="status-success">
-                    //         <i class="fa-solid fa-check-circle"></i>
-                    //         <span>Key bound to: <strong>${key}</strong></span>
-                    //     </div>
-                    // `;
+                    // Show success message briefly
+                    inputEl.textContent = `Key bound: ${key}`;
                 } else {
-                    // statusEl.innerHTML = `
-                    //     <div class="status-error">
-                    //         <i class="fa-solid fa-times-circle"></i>
-                    //         <span>Key binding cancelled</span>
-                    //     </div>
-                    // `;
+                    // Show error message briefly
+                    inputEl.textContent = 'Key binding failed';
                 }
-                statusEl.style.display = 'block';
                 
-                // Auto-hide after 3 seconds
-                setTimeout(() => {
-                    hideKeyBinding();
-                }, 3000);
+                // Hide cursor during status update
+                if (cursorEl) {
+                    cursorEl.style.display = 'none';
+                }
             }
         }
 
@@ -1580,24 +1570,24 @@
                         // Hide immediately after success
                         setTimeout(() => {
                             hideKeyBinding(); 
-                        }, 500); 
+                        }, 200); 
                     } else {
                         updateKeyBindingStatus(null, null, false);
                         // Hide immediately after failure
                         setTimeout(() => {
                             hideKeyBinding(); 
-                        }, 1000); 
+                        }, 500); 
                     }
                 } else if (data.type === 'keySelectionReset') {
                     // Reset key binding message to allow new key selection
                     const inputEl = document.getElementById('keyBindingText');
-                    const statusEl = document.getElementById('keyBindingStatus');
+                    const cursorEl = document.getElementById('cursor');
                     
                     if (inputEl) {
                         inputEl.textContent = 'Press key';
                     }
-                    if (statusEl) {
-                        statusEl.style.display = 'none';
+                    if (cursorEl) {
+                        cursorEl.style.display = 'inline-block';
                     }
                 } else if (data.type === 'hideKeyBinding') {
                     hideKeyBinding();
