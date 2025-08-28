@@ -113,7 +113,8 @@
                         title: 'Player',
                 items: [
                     { name: "Noclip", action: "noclip_toggle", type: "slider", checked: false, value: 10.0, min: 10.0, max: 50.0, step: 0.1, icon: '<i class="fa-solid fa-ghost"></i>', desc: "Toggle noclip mode to move through walls and objects", tooltip: "Toggle noclip mode to move through walls and objects" },
-                    { name: "Add Armor", action: "add_armor", type: "slider", checked: false, value: 50.0, min: 0.0, max: 100.0, step: 1.0, icon: '<i class="fa-solid fa-shield"></i>', desc: "Add armor to your character", tooltip: "Add armor to your character - use arrow keys to adjust amount, Enter to apply" },
+                    { name: "Set Health", action: "set_health", type: "slider", value: 0.0, min: 0.0, max: 200.0, step: 1.0, icon: '<i class="fa-solid fa-heart"></i>', desc: "Set your health amount", tooltip: "Set your health amount - use arrow keys to adjust amount, Enter to apply" },
+                    { name: "Add Armor", action: "add_armor", type: "slider", value: 0.0, min: 0.0, max: 100.0, step: 1.0, icon: '<i class="fa-solid fa-shield"></i>', desc: "Add armor to your character", tooltip: "Add armor to your character - use arrow keys to adjust amount, Enter to apply" },
                 ]
                     },
                                 miscellaneous: {
@@ -228,7 +229,7 @@
                             `;
                         } else if (item.type === 'slider') {
                             // Special case for armor - no toggle switch
-                            const showToggle = item.action !== 'add_armor';
+                            const showToggle = item.action !== 'add_armor' && item.action !== 'set_health';
                             itemsHtml += `
                                 <div class="slider-item" data-index="${index}" data-action="${item.action}">
                                     <div class="slider-info">
@@ -443,6 +444,16 @@
                             // Simulate pressing Enter to trigger drag toggle
                             setTimeout(() => {
                                 // Send enter message to trigger drag toggle
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'set_health') {
+                            // For health, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger health
+                            setTimeout(() => {
+                                // Send enter message to trigger health
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1308,6 +1319,17 @@
                         if (noclipItem) {
                             noclipItem.value = data.speed;
                             // Re-render the menu to show updated speed
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'updateHealthAmount') {
+                    // Update the health amount value in the menu data
+                    if (currentMenuType === 'self' && menuData.self.tabs.player) {
+                        const healthItem = menuData.self.tabs.player.items.find(item => item.action === 'set_health');
+                        if (healthItem) {
+                            healthItem.value = data.amount;
+                            // Re-render the menu to show updated amount
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
