@@ -1058,6 +1058,27 @@ html, body {
     box-shadow: 0 0 0 2px rgba(0, 170, 255, 0.2);
 }
 
+.weapon-cursor {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    animation: blink 1s infinite steps(1, end);
+    pointer-events: none;
+    display: none;
+}
+
+.weapon-input-overlay .input-field {
+    position: relative;
+}
+
+.weapon-input-overlay .input-field:focus-within .weapon-cursor {
+    display: block;
+}
+
 
 /* separator */
 .menu-separator {
