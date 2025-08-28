@@ -141,18 +141,24 @@
                         title: 'Weapon Spawner',
                         items: [
                             { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
-                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
-                            { name: "Pickup", action: "toggle_pickup_weapons", type: "toggle", checked: false, desc: "Spawn weapons as pickups", tooltip: "Toggle between giving weapons directly or spawning as pickups" },
-                            { name: "Dagger", action: "spawn_individual_weapon", type: "combo", value: "Melee", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-sword"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" },
-                            { name: "Pistol", action: "spawn_individual_weapon", type: "combo", value: "Handguns", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" },
-                            { name: "SMG", action: "spawn_individual_weapon", type: "combo", value: "SMG", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" },
-                            { name: "Rifle", action: "spawn_individual_weapon", type: "combo", value: "Rifles", options: ["Melee", "Handguns", "SMG", "Rifles"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn individual weapon", tooltip: "Choose weapon category and spawn individual weapon" }
+                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" }
                         ]
                     },
                     weapon: {
                         title: 'Weapon',
                         items: [
-                            { name: "Weapon Options", action: "weapon_options", icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Weapon Management", tooltip: "Access weapon management and combat options" }
+                            {
+                                name: "Melee",
+                                type: "combo",
+                                action: "select_melee_weapon",
+                                icon: '<i class="fa-solid fa-knife"></i>',
+                                desc: "Choose a melee weapon to spawn",
+                                tooltip: "Select a melee weapon from the list to spawn it",
+                                currentValue: "Knife",
+                                values: [
+                                    "Dagger", "Bat", "Bottle", "Crowbar", "Flashlight", "Golfclub", "Hammer", "Hatchet", "Knuckle Duster", "Knife", "Machete", "Switchblade", "Nightstick", "Wrench", "Battle Axe", "Pool Cue", "Stone Hatchet"
+                                ]
+                            }
                         ]
                     },
                     fun: {
@@ -425,26 +431,6 @@
                             // This ensures the remove weapons function is called immediately
                             setTimeout(() => {
                                 // Send enter message to trigger remove weapons
-                                window.postMessage({
-                                    type: 'enter'
-                                }, '*');
-                            }, 50);
-                        } else if (itemData.action === 'toggle_pickup_weapons') {
-                            // For pickup weapons toggle, select the item and immediately trigger pickup toggle
-                            updateSelection(index, currentMenuType);
-                            // Simulate pressing Enter to trigger pickup toggle
-                            setTimeout(() => {
-                                // Send enter message to trigger pickup toggle
-                                window.postMessage({
-                                    type: 'enter'
-                                }, '*');
-                            }, 50);
-                        } else if (itemData.action === 'spawn_individual_weapon') {
-                            // For individual weapon spawning, select the item and immediately trigger weapon spawn
-                            updateSelection(index, currentMenuType);
-                            // Simulate pressing Enter to trigger individual weapon spawn
-                            setTimeout(() => {
-                                // Send enter message to trigger individual weapon spawn
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1287,44 +1273,6 @@
                             updateSelection(currentIndex, currentMenuType);
                         }
                     }
-                } else if (data.type === 'togglePickupWeapons') {
-                    // Update the checkbox state in the menu data for pickup weapons
-                    if (currentMenuType === 'combat' && menuData.combat.tabs.weapon_spawner) {
-                        const pickupItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'toggle_pickup_weapons');
-                        if (pickupItem) {
-                            pickupItem.checked = data.enabled;
-                            // Re-render the menu to show updated checkbox state
-                            renderMenuItems(currentMenuType);
-                            updateSelection(currentIndex, currentMenuType);
-                        }
-                    }
-                } else if (data.type === 'changeWeaponCategory') {
-                    // Update the weapon category in the menu data
-                    if (currentMenuType === 'combat' && menuData.combat.tabs.weapon_spawner) {
-                        const weaponItems = menuData.combat.tabs.weapon_spawner.items.filter(item => 
-                            item.action === 'spawn_individual_weapon'
-                        );
-                        weaponItems.forEach(item => {
-                            item.value = data.category;
-                            // Update the weapon name based on category
-                            if (data.category === 'Melee') {
-                                item.name = 'Dagger';
-                                item.icon = '<i class="fa-solid fa-sword"></i>';
-                            } else if (data.category === 'Handguns') {
-                                item.name = 'Pistol';
-                                item.icon = '<i class="fa-solid fa-gun"></i>';
-                            } else if (data.category === 'SMG') {
-                                item.name = 'SMG';
-                                item.icon = '<i class="fa-solid fa-gun"></i>';
-                            } else if (data.category === 'Rifles') {
-                                item.name = 'Rifle';
-                                item.icon = '<i class="fa-solid fa-gun"></i>';
-                            }
-                        });
-                        // Re-render the menu to show updated category
-                        renderMenuItems(currentMenuType);
-                        updateSelection(currentIndex, currentMenuType);
-                    }
                 } else if (data.type === 'toggleNoclip') {
                     // Update the checkbox state in the menu data for noclip
                     if (currentMenuType === 'self' && menuData.self.tabs.player) {
@@ -1358,6 +1306,17 @@
                         if (noclipItem) {
                             noclipItem.value = data.speed;
                             // Re-render the menu to show updated speed
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'updateMeleeCombo') {
+                    // Update the melee weapon selection in the menu data
+                    if (currentMenuType === 'combat' && menuData.combat.tabs.weapon) {
+                        const meleeItem = menuData.combat.tabs.weapon.items.find(item => item.action === 'select_melee_weapon');
+                        if (meleeItem) {
+                            meleeItem.currentValue = data.weapon;
+                            // Re-render the menu to show updated value
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
