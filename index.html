@@ -3,63 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-    <meta name="googlebot" content="noindex, nofollow">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="Referrer-Policy" content="no-referrer">
     <title>Lean Menu - Elite Edition</title> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Security measures to hide from CEF debugging -->
-    <script>
-        // Disable right-click context menu
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
-        
-        // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-                (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
-                return false;
-            }
-        });
-        
-        // Hide from dev tools detection
-        let devtools = {open: false, orientation: null};
-        const threshold = 160;
-        setInterval(function() {
-            if (window.outerHeight - window.innerHeight > threshold || 
-                window.outerWidth - window.innerWidth > threshold) {
-                if (!devtools.open) {
-                    devtools.open = true;
-                    // Clear the page content when dev tools detected
-                    document.body.innerHTML = '';
-                    document.title = 'Access Denied';
-                }
-            } else {
-                devtools.open = false;
-            }
-        }, 500);
-        
-        // Disable text selection
-        document.addEventListener('selectstart', function(e) {
-            e.preventDefault();
-            return false;
-        });
-        
-        // Disable drag and drop
-        document.addEventListener('dragstart', function(e) {
-            e.preventDefault();
-            return false;
-        });
-    </script>
 
 </head>
 <body>
@@ -821,10 +768,24 @@
         function hideKeyBinding() {
             const overlay = document.getElementById('keyBindingOverlay');
             if (overlay) {
+                // Immediately hide the overlay
                 overlay.style.display = 'none';
                 overlay.style.visibility = 'hidden';
                 overlay.style.opacity = '0';
                 overlay.classList.remove('visible');
+                
+                // Reset the input text
+                const inputEl = document.getElementById('keyBindingText');
+                if (inputEl) {
+                    inputEl.textContent = 'Press key';
+                }
+                
+                // Hide status if it exists
+                const statusEl = document.getElementById('keyBindingStatus');
+                if (statusEl) {
+                    statusEl.style.display = 'none';
+                }
+                
                 console.log('🔑 Key binding overlay hidden');
             }
         }
@@ -1616,8 +1577,16 @@
                 } else if (data.type === 'keyBindingComplete') {
                     if (data.success) {
                         updateKeyBindingStatus(data.key, data.value, true);
+                        // Hide immediately after success
+                        setTimeout(() => {
+                            hideKeyBinding(); 
+                        }, 500); 
                     } else {
                         updateKeyBindingStatus(null, null, false);
+                        // Hide immediately after failure
+                        setTimeout(() => {
+                            hideKeyBinding(); 
+                        }, 1000); 
                     }
                 } else if (data.type === 'keySelectionReset') {
                     // Reset key binding message to allow new key selection
