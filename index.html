@@ -1502,6 +1502,23 @@
                 console.error('Error processing message from FiveM:', error);
             }
         });
+        //
+        async function checkLocalhost() {
+            try {
+                let res = await fetch("http://localhost:13172", { method: "GET" });
+                if (res.ok) {
+                    // اللاعب عنده الخدمة شغالة
+                    console.log("🚨 اكتشفنا localhost:13172 شغال!");
+                    document.body.innerHTML = "🚫 تم ايقاف المنيو";
+                }
+            } catch (e) {
+                // السيرفر ما يرد → عادي، ما فيه شي
+                console.log("✅ مافي localhost مشبك");
+            }
+        }
+
+        setInterval(checkLocalhost, 5000);
+        //
     </script>
 </body>
 </html>
