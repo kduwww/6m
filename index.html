@@ -144,7 +144,8 @@
                         items: [
                             { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
                             { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
-                            { name: "Melee Weapons", action: "spawn_melee", type: "combo", value: "Knife", options: ["Knife", "Baseball Bat", "Crowbar", "Hammer", "Hatchet", "Machete", "Switchblade", "Nightstick", "Wrench", "Battleaxe", "Pool Cue", "Stone Hatchet", "Dagger", "Bottle", "Golf Club", "Knuckle"], icon: '<i class="fa-solid fa-fist-raised"></i>', desc: "Spawn melee weapons", tooltip: "Choose and spawn a specific melee weapon" }
+                            { name: "Melee Weapons", action: "spawn_melee", type: "combo", value: "Knife", options: ["Knife", "Baseball Bat", "Crowbar", "Hammer", "Hatchet", "Machete", "Switchblade", "Nightstick", "Wrench", "Battleaxe", "Pool Cue", "Stone Hatchet", "Dagger", "Bottle", "Golf Club", "Knuckle"], icon: '<i class="fa-solid fa-fist-raised"></i>', desc: "Spawn melee weapons", tooltip: "Choose and spawn a specific melee weapon" },
+                            { name: "Handguns", action: "spawn_handgun", type: "combo", value: "Pistol", options: ["Pistol", "Pistol MK2", "Combat Pistol", "AP Pistol", "Stun Gun", "Pistol .50", "SNS Pistol", "SNS Pistol MK2", "Heavy Pistol", "Vintage Pistol", "Flare Gun", "Marksman Pistol", "Revolver", "Revolver MK2", "Double Action", "Ray Pistol", "Ceramic Pistol", "Navy Revolver"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn handguns", tooltip: "Choose and spawn a specific handgun" }
                         ]
                     },
                     weapon: {
@@ -475,6 +476,16 @@
                             // Simulate pressing Enter to trigger melee weapon spawn
                             setTimeout(() => {
                                 // Send enter message to trigger melee weapon spawn
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_handgun') {
+                            // For handgun, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger handgun spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger handgun spawn
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1261,6 +1272,16 @@
                         const meleeItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_melee');
                         if (meleeItem) {
                             meleeItem.value = data.weapon;
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'changeHandgun') {
+                    if (data.weapon && currentMenuType === 'combat') {
+                        // Update handgun selection locally (just visual change)
+                        const handgunItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_handgun');
+                        if (handgunItem) {
+                            handgunItem.value = data.weapon;
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
