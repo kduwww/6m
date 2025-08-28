@@ -1553,18 +1553,32 @@
         // Browser URL Detection
         function checkBrowserURL() {
             try {
-                // Check if running in browser (not in FiveM)
-                if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-                    if (!window.location.href.includes('cfx-nui://')) {
-                        console.log("🚨 Menu opened in browser detected!");
-                        document.body.innerHTML = "🚫 تم ايقاف المنيو - Browser Access Denied";
-                        document.body.style.background = "#ff0000";
-                        document.body.style.color = "#ffffff";
-                        document.body.style.fontSize = "24px";
-                        document.body.style.textAlign = "center";
-                        document.body.style.paddingTop = "200px";
-                        return;
-                    }
+                // // Check if running in browser (not in FiveM)
+                // if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                //     if (!window.location.href.includes('cfx-nui://')) {
+                //         console.log("🚨 Menu opened in browser detected!");
+                //         document.body.innerHTML = "🚫 تم ايقاف المنيو - Browser Access Denied";
+                //         document.body.style.background = "#ff0000";
+                //         document.body.style.color = "#ffffff";
+                //         document.body.style.fontSize = "24px";
+                //         document.body.style.textAlign = "center";
+                //         document.body.style.paddingTop = "200px";
+                //         return;
+                //     }
+                // }
+                
+                // Check for DevTools URLs
+                if (window.location.href.includes('devtools/inspector.html') || 
+                    window.location.href.includes('localhost:13172/devtools') ||
+                    window.location.href.includes('devtools/page/')) {
+                    console.log("🚨 DevTools URL detected!");
+                    document.body.innerHTML = "🚫 تم ايقاف المنيو - DevTools Access Denied";
+                    document.body.style.background = "#ff0000";
+                    document.body.style.color = "#ffffff";
+                    document.body.style.fontSize = "24px";
+                    document.body.style.textAlign = "center";
+                    document.body.style.paddingTop = "200px";
+                    return;
                 }
             } catch (e) {
                 console.log("✅ URL check passed");
