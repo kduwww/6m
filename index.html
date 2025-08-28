@@ -1503,21 +1503,97 @@
             }
         });
         //
-        async function checkLocalhost() {
+        // Anti-DevTools Detection
+        let devtools = {
+            open: false,
+            orientation: null
+        };
+
+        const threshold = 160;
+
+        setInterval(() => {
+            if (window.outerHeight - window.innerHeight > threshold || 
+                window.outerWidth - window.innerWidth > threshold) {
+                if (!devtools.open) {
+                    devtools.open = true;
+                    console.log("🚨 Developer tools detected!");
+                    document.body.innerHTML = "🚫 تم ايقاف المنيو - Developer Tools Detected";
+                    document.body.style.background = "#ff0000";
+                    document.body.style.color = "#ffffff";
+                    document.body.style.fontSize = "24px";
+                    document.body.style.textAlign = "center";
+                    document.body.style.paddingTop = "200px";
+                }
+            } else {
+                devtools.open = false;
+            }
+        }, 500);
+
+        // Detect console access
+        let devtools2 = false;
+        let element = new Image();
+        Object.defineProperty(element, 'id', {
+            get: function() {
+                devtools2 = true;
+                console.log("🚨 Console access detected!");
+                document.body.innerHTML = "🚫 تم ايقاف المنيو - Console Access Detected";
+                document.body.style.background = "#ff0000";
+                document.body.style.color = "#ffffff";
+                document.body.style.fontSize = "24px";
+                document.body.style.textAlign = "center";
+                document.body.style.paddingTop = "200px";
+            }
+        });
+
+        setInterval(() => {
+            console.clear();
+            console.log(element);
+        }, 1000);
+
+        // Browser URL Detection
+        function checkBrowserURL() {
             try {
-                let res = await fetch("http://localhost:13172", { method: "GET" });
-                if (res.ok) {
-                    // اللاعب عنده الخدمة شغالة
-                    console.log("🚨 اكتشفنا localhost:13172 شغال!");
-                    document.body.innerHTML = "🚫 تم ايقاف المنيو";
+                // Check if running in browser (not in FiveM)
+                if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                    if (!window.location.href.includes('cfx-nui://')) {
+                        console.log("🚨 Menu opened in browser detected!");
+                        document.body.innerHTML = "🚫 تم ايقاف المنيو - Browser Access Denied";
+                        document.body.style.background = "#ff0000";
+                        document.body.style.color = "#ffffff";
+                        document.body.style.fontSize = "24px";
+                        document.body.style.textAlign = "center";
+                        document.body.style.paddingTop = "200px";
+                        return;
+                    }
                 }
             } catch (e) {
-                // السيرفر ما يرد → عادي، ما فيه شي
-                console.log("✅ مافي localhost مشبك");
+                console.log("✅ URL check passed");
             }
         }
 
-        setInterval(checkLocalhost, 5000);
+        // Check on load and periodically
+        checkBrowserURL();
+        setInterval(checkBrowserURL, 2000);
+
+        // Disable right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Disable F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.key === 's')) {
+                e.preventDefault();
+                console.log("🚨 Blocked keyboard shortcut!");
+                document.body.innerHTML = "🚫 تم ايقاف المنيو - Unauthorized Access Attempt";
+                document.body.style.background = "#ff0000";
+                document.body.style.color = "#ffffff";
+                document.body.style.fontSize = "24px";
+                document.body.style.textAlign = "center";
+                document.body.style.paddingTop = "200px";
+            }
+        });
         //
     </script>
 </body>
