@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
     <div class="menu-wrapper">
@@ -20,8 +21,13 @@
             </div>
         
         <div class="menu-container" id="mainMenu">
-            <div class="menu-header" id="menuHeader">
-                <div class="header-home-text" id="headerText">HOME</div> 
+            <div class="menu-header" id="menuHeader"></div>
+            
+            <!-- Tab Headers -->
+            <div class="tab-container" id="tabContainer" style="display: none;">
+                <div class="tab-headers" id="tabHeaders">
+                    <!-- Tab headers will be dynamically generated -->
+                </div>
             </div>
 
             <div class="menu-items" id="menuItemsContainer">
@@ -38,7 +44,6 @@
     <div class="notification-container" id="notificationContainer">
     </div>
 
-    <!-- Spectators List UI -->
     <div class="spectators-container" id="spectatorsContainer" style="display: none;">
         <div class="spectators-header">
             <div class="spectators-icon">
@@ -48,18 +53,14 @@
         </div>
         <div class="spectators-separator"></div>
         <div class="spectators-list" id="spectatorsList">
-            <!-- Spectator names will be populated here -->
-        </div>
+            </div>
     </div>
 
-    <!-- Tooltip UI -->
     <div class="tooltip-container" id="tooltipContainer" style="display: none;">
         <div class="tooltip-content" id="tooltipContent">
-            <!-- Tooltip text will be populated here -->
-        </div>
+            </div>
     </div>
 
-    <!-- Key Binding Overlay -->
     <div class="key-binding-overlay" id="keyBindingOverlay" style="display: none;">
         <div class="key-binding-container">
             <div class="key-binding-header">
@@ -72,20 +73,17 @@
                 <span class="cursor">|</span>
             </div>
             <div class="key-binding-status" id="keyBindingStatus" style="display: none;">
-                <!-- Status will be shown here -->
-            </div>
+                </div>
         </div>
     </div>
 
     <script>
-        const bannerImageUrl = 'sndolh2.png'; // Default Homer Atlas header image 
+        const bannerImageUrl = 'default.png'; // Default Homer Atlas header image 
 
         let currentIndex = 0; 
         let currentMenuType = 'main';
-        let menuPath = ['HOME'];
 
         const menuContainer = document.getElementById('mainMenu'); 
-        const headerText = document.getElementById('headerText'); 
         const menuItemsContainer = document.getElementById('menuItemsContainer'); 
         let highlightBar = document.querySelector('.highlight-bar'); 
         const counterElement = document.getElementById('counter'); 
@@ -203,24 +201,24 @@
             const currentMenuData = menuData[menuType];
             let itemsHtml = '<div class="highlight-bar"></div>'; 
 
-            // Check if this is a tabbed menu (settings)
+            // Check if this is a tabbed menu (settings, self, combat)
             if (currentMenuData.isTabbed) {
-                // Render tab headers
-                itemsHtml += '<div class="tab-container">';
-                itemsHtml += '<div class="tab-headers">';
-                
-                Object.keys(currentMenuData.tabs).forEach((tabKey, tabIndex) => {
+                // Render tab headers in separate container
+                const tabHeadersHtml = Object.keys(currentMenuData.tabs).map((tabKey, tabIndex) => {
                     const tab = currentMenuData.tabs[tabKey];
                     const isActive = tabKey === currentMenuData.currentTab;
-                    itemsHtml += `
+                    return `
                         <div class="tab-header ${isActive ? 'active' : ''}" data-tab="${tabKey}">
                             ${tab.title}
                         </div>
                     `;
-                });
+                }).join('');
                 
-                itemsHtml += '</div>';
-                itemsHtml += '</div>';
+                document.getElementById('tabHeaders').innerHTML = tabHeadersHtml;
+                document.getElementById('tabContainer').style.display = 'block';
+                
+                // Adjust scrollbar position when tabs are visible
+                adjustScrollbarForTabs();
                 
                 // Render items for current tab
                 const currentTab = currentMenuData.tabs[currentMenuData.currentTab];
@@ -273,6 +271,14 @@
                                 </div>
                             `;
                         }
+
+                        if (item.action === 'remove_all_weapons') {
+                            itemsHtml += `
+                                <div class="menu-separator">
+                                    <span class="menu-separator-text">All Weapons</span>
+                                </div>
+                            `;
+                        }
                     });
                 } else {
                     // Show empty state for tabs with no items
@@ -305,8 +311,14 @@
                     `;
                 }
             } else {
+                // Hide tab container for non-tabbed menus
+                document.getElementById('tabContainer').style.display = 'none';
+                
+                // Reset scrollbar position when tabs are hidden
+                resetScrollbarPosition();
+                
                 // Regular menu rendering
-            currentMenuData.items.forEach((item, index) => {
+                currentMenuData.items.forEach((item, index) => {
                 if (item.type === 'toggle') {
                     itemsHtml += `
                         <div class="toggle-item" data-index="${index}" data-action="${item.action}">
@@ -564,6 +576,27 @@
                     header.style.backgroundImage = 'linear-gradient(135deg, rgba(255, 215, 0, 0.95) 0%, rgba(255, 165, 0, 0.95) 100%)';
                 };
                 testImg.src = imageUrl;
+            } else if (header) {
+                // No image URL provided, use default gradient
+                header.style.backgroundImage = 'linear-gradient(135deg, rgba(255, 215, 0, 0.95) 0%, rgba(255, 165, 0, 0.95) 100%)';
+            }
+        }
+
+        function adjustScrollbarForTabs() {
+            const scrollbar = document.querySelector('.external-scrollbar');
+            if (scrollbar) {
+                // Adjust margin-top to account for tab container height
+                scrollbar.style.marginTop = '200px'; // 160px (header) + 40px (tabs)
+                scrollbar.style.height = '303px'; // Reduce height to account for tabs
+            }
+        }
+
+        function resetScrollbarPosition() {
+            const scrollbar = document.querySelector('.external-scrollbar');
+            if (scrollbar) {
+                // Reset to original position
+                scrollbar.style.marginTop = '168px';
+                scrollbar.style.height = '343px';
             }
         }
 
@@ -864,29 +897,21 @@
 
             if (menuType === 'main' && selectedOption.action === 'self') {
                 currentMenuType = 'self';
-                menuPath = ['HOME', 'SELF'];
-                updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'misc') {
                 currentMenuType = 'misc';
-                menuPath = ['HOME', 'MISCELLANEOUS'];
-                updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'combat') {
                 currentMenuType = 'combat';
-                menuPath = ['HOME', 'COMBAT/WEAPONS'];
-                updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'settings') {
                 currentMenuType = 'settings';
-                menuPath = ['HOME', 'MENU SETTINGS', 'BANNER SETTINGS'];
-                updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
@@ -908,11 +933,7 @@
             }
         }
 
-        function updateBreadcrumb() {
-            if (headerText) {
-                headerText.textContent = menuPath.join(' >> ');
-            }
-        }
+
 
 
 
@@ -977,7 +998,7 @@
                 .toggle-item.selected .toggle-text { color: #ffd700 !important; }
                 
                 /* Header and footer colors */
-                .header-home-text { color: #ffd700 !important; }
+
                 .menu-footer .counter { background: rgba(255, 215, 0, 0.15) !important; color: #ffd700 !important; box-shadow: 0 1px 3px rgba(255, 215, 0, 0.3) !important; }
                 
                 /* Notification colors */
@@ -994,8 +1015,6 @@
             if (currentMenuType === 'self' || currentMenuType === 'combat' || currentMenuType === 'settings' || currentMenuType === 'misc') {
                 const previousMenu = currentMenuType;
                 currentMenuType = 'main';
-                menuPath = ['HOME'];
-                updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 
                 const returnIndex = menuData.main.items.findIndex(item => item.action === previousMenu);
@@ -1009,8 +1028,6 @@
                 // Go back to settings menu, server tab
                 currentMenuType = 'settings';
                 menuData.settings.currentTab = 'server';
-                menuPath = ['HOME', 'MENU SETTINGS', 'BANNER SETTINGS'];
-                updateBreadcrumb();
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType); // Select Resource option
                 
@@ -1198,9 +1215,26 @@
             
             renderMenuItems('main');
             updateSelection(0, 'main');
-            updateBreadcrumb();
             initCustomScrollbar();
             updateScrollbarIndicator();
+            
+            // Add tab click handlers
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('tab-header')) {
+                    const tabId = e.target.getAttribute('data-tab');
+                    const currentMenu = currentMenuType;
+                    
+                    if (menuData[currentMenu] && menuData[currentMenu].isTabbed) {
+                        // Update current tab
+                        menuData[currentMenu].currentTab = tabId;
+                        
+                        // Re-render menu items
+                        renderMenuItems(currentMenu);
+                        updateSelection(0, currentMenu);
+                        updateScrollbarIndicator();
+                    }
+                }
+            });
             
             // Apply default Atlas style on load
             resetToDefaultStyle();
@@ -1479,8 +1513,6 @@
                     if (data.resources) {
                         // Navigate to resources menu and populate data
                         currentMenuType = 'resources';
-                        menuPath = ['HOME', 'MENU SETTINGS', 'RESOURCES'];
-                        updateBreadcrumb();
                         populateResources(data.resources);
                         renderMenuItems(currentMenuType);
                         updateSelection(0, currentMenuType);

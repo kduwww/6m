@@ -40,7 +40,7 @@ html, body {
     opacity: 1; 
 }
 
-.menu-header {
+.menu-header { 
     height: 160px; 
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.95) 0%, rgba(255, 165, 0, 0.95) 100%); 
     position: relative;
@@ -50,24 +50,7 @@ html, body {
     border-top-left-radius: 7px; 
     border-top-right-radius: 7px;
     box-shadow: inset 0 -2px 6px rgba(255, 215, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.2); 
-}
-
-.header-home-text {
-    position: absolute; 
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #000000; 
-    color: #ffffff;
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px; 
-    font-weight: 600; 
-    text-transform: uppercase;
-    letter-spacing: 1px; 
-    text-align: center; 
-    padding: 8px; 
-    border-radius: 0; 
-    box-shadow: none; 
+    flex-shrink: 0;
 }
 
 .external-scrollbar {
@@ -84,6 +67,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     padding: 4px 0;
+    z-index: 10;
 }
 
 .custom-scrollbar {
@@ -167,13 +151,14 @@ html, body {
 
 .menu-items {
     padding: 4px 0;
-    height: calc(100% - 160px - 32px); 
+    flex-grow: 1; /* Changed from fixed height to flex-grow */
     overflow-y: auto; 
     position: relative;
     display: flex;
     flex-direction: column;
     scroll-behavior: smooth;
     padding-bottom: 20px;
+    z-index: 1;
 }
 
 .menu-items::-webkit-scrollbar {
@@ -463,14 +448,20 @@ html, body {
 /* Tab styles for settings menu */
 .tab-container {
     width: 100%;
-    margin-bottom: 10px;
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
 }
 
 .tab-headers {
     display: flex;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 4px;
-    margin: 8px 12px;
+    background: transparent;
+    border-radius: 0;
+    margin: 0;
     overflow: hidden;
 }
 
@@ -1030,4 +1021,47 @@ html, body {
     font-weight: 600;
     border: 1px solid rgba(0, 168, 255, 0.32);
     font-size: 11px;
+}
+
+
+/* separator */
+.menu-separator {
+    display: flex;
+    align-items: center;
+    margin: 8px 20px;
+    position: relative;
+}
+
+.menu-separator::before,
+.menu-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.3) 20%, 
+        rgba(255, 255, 255, 0.6) 50%, 
+        rgba(255, 255, 255, 0.3) 80%, 
+        transparent 100%
+    );
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+.menu-separator::before {
+    margin-right: 12px;
+}
+
+.menu-separator::after {
+    margin-left: 12px;
+}
+
+.menu-separator-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
