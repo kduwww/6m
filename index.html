@@ -70,7 +70,7 @@
                 <span class="label">Select a keybind (Open key)</span>
             </div>
             <div class="input-field" id="keyBindingInput">
-                <span id="keyBindingText" class="key-text">Press key</span>
+                <span class="key-text" id="keyBindingText"></span>
                 <span class="cursor" id="cursor"></span>
             </div>
         </div>
@@ -758,7 +758,7 @@
             const cursorEl = document.getElementById('cursor');
             
             if (overlay && inputEl) {
-                inputEl.textContent = message || 'Press key';
+                inputEl.textContent = '';
                 if (cursorEl) {
                     cursorEl.style.display = 'inline-block';
                 }
@@ -777,14 +777,12 @@
                 
                 // Reset the input text
                 const inputEl = document.getElementById('keyBindingText');
-                if (inputEl) {
-                    inputEl.textContent = 'Press key';
-                }
-                
-                // Hide cursor
                 const cursorEl = document.getElementById('cursor');
+                if (inputEl) {
+                    inputEl.textContent = '';
+                }
                 if (cursorEl) {
-                    cursorEl.style.display = 'none';
+                    cursorEl.style.display = 'inline-block';
                 }
                 
                 console.log('🔑 Key binding overlay hidden');
@@ -1584,7 +1582,7 @@
                     const cursorEl = document.getElementById('cursor');
                     
                     if (inputEl) {
-                        inputEl.textContent = 'Press key';
+                        inputEl.textContent = '';
                     }
                     if (cursorEl) {
                         cursorEl.style.display = 'inline-block';
