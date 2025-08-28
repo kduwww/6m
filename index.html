@@ -1502,251 +1502,28 @@
                 console.error('Error processing message from FiveM:', error);
             }
         });
+
         //
-        // Anti-DevTools Detection for FiveM CEF
-        let devtoolsDetected = false;
-        let consoleAccessDetected = false;
         
-        // Detection threshold for window size changes
-        const sizeThreshold = 160;
-        
-        // Check for CEF DevTools window size changes
-        setInterval(() => {
-            const heightDiff = window.outerHeight - window.innerHeight;
-            const widthDiff = window.outerWidth - window.innerWidth;
-            
-            if (heightDiff > sizeThreshold || widthDiff > sizeThreshold) {
-                if (!devtoolsDetected) {
-                    devtoolsDetected = true;
-                    triggerDevToolsBlock('FiveM CEF DevTools Detected');
-                }
-            } else {
-                devtoolsDetected = false;
-            }
-        }, 300);
-
-        // Detect localhost:13172 access (FiveM CEF DevTools port)
-        const originalFetch = window.fetch;
-        window.fetch = function(...args) {
-            const url = args[0];
-            if (typeof url === 'string' && (url.includes('localhost:13172') || url.includes('127.0.0.1:13172'))) {
-                triggerDevToolsBlock('FiveM CEF DevTools Port Access Detected');
-                return Promise.reject(new Error('Blocked'));
-            }
-            return originalFetch.apply(this, args);
-        };
-
-        // Override XMLHttpRequest to detect localhost:13172
-        const originalXHR = window.XMLHttpRequest;
-        window.XMLHttpRequest = function() {
-            const xhr = new originalXHR();
-            const originalOpen = xhr.open;
-            xhr.open = function(method, url, ...args) {
-                if (typeof url === 'string' && (url.includes('localhost:13172') || url.includes('127.0.0.1:13172'))) {
-                    triggerDevToolsBlock('FiveM CEF DevTools Port Access Detected');
-                    return;
-                }
-                return originalOpen.apply(this, [method, url, ...args]);
-            };
-            return xhr;
-        };
-
-        // Detect console access with trap
-        let consoleElement = new Image();
-        Object.defineProperty(consoleElement, 'id', {
-            get: function() {
-                if (!consoleAccessDetected) {
-                    consoleAccessDetected = true;
-                    triggerDevToolsBlock('FiveM CEF Console Access Detected');
-                }
-                return 'detected';
-            }
-        });
-
-        // Periodically trigger console detection
-        setInterval(() => {
-            console.clear();
-            console.log('%c', consoleElement);
-        }, 800);
-
-        // Check for known FiveM CEF DevTools signatures
-        setInterval(() => {
-            // Check for CEF-specific globals
-            // Check for CEF-specific globals and DevTools indicators
-            if (window.cefQuery || window.__cefQuery || window.CefSharp || 
-                window.chrome && window.chrome.runtime || 
-                window.DevToolsAPI || 
-                window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-                triggerDevToolsBlock('FiveM CEF DevTools Environment Detected');
-            }
-
-            // Check for debugging-related window properties
-            if (window.webkitStorageInfo || window.webkitIndexedDB || 
-                (window.chrome && window.chrome.webstore) ||
-                window.onerror === null) {
-                triggerDevToolsBlock('Development Environment Detected');
-            }
-
-            // Additional script source checking
-            const scripts = document.getElementsByTagName('script');
-            for (let script of scripts) {
-                if (script.src && (
-                    script.src.includes('localhost:13172') || 
-                    script.src.includes('devtools') ||
-                    script.src.includes('inspector') ||
-                    script.src.includes('debug')
-                )) {
-                    triggerDevToolsBlock('FiveM CEF DevTools Script Detected');
-                    break;
-                }
-            }
-
-            // Check for iframe with DevTools-related sources
-            const iframes = document.getElementsByTagName('iframe');
-            for (let iframe of iframes) {
-                if (iframe.src && (
-                    iframe.src.includes('localhost:13172') ||
-                    iframe.src.includes('devtools') ||
-                    iframe.src.includes('chrome-devtools://')
-                )) {
-                    triggerDevToolsBlock('FiveM CEF DevTools Iframe Detected');
-                    break;
-                }
-            }
-
-            // Check for DevTools-specific DOM elements
-            const devToolsElements = document.querySelectorAll('[class*="devtools"], [id*="devtools"], [class*="inspector"], [id*="inspector"]');
-            if (devToolsElements.length > 0) {
-                triggerDevToolsBlock('FiveM CEF DevTools Elements Detected');
-            }
-        }, 1000);
-
-        // Function to trigger DevTools block
-        function triggerDevToolsBlock(reason) {
-            console.log(`🚨 ${reason}!`);
-            document.body.innerHTML = `
-                <div style="
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(45deg, #ff0000, #cc0000);
-                    color: #ffffff;
-                    font-family: Arial, sans-serif;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 999999;
-                ">
-                    <div style="font-size: 48px; margin-bottom: 20px;">🚫</div>
-                    <div style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">MENU DISABLED</div>
-                    <div style="font-size: 20px; margin-bottom: 20px;">تم ايقاف المنيو</div>
-                    <div style="font-size: 16px; text-align: center; max-width: 600px;">
-                        ${reason}<br>
-                        Unauthorized debugging tools detected.<br>
-                        Please restart FiveM to continue.
-                    </div>
-                </div>
-            `;
-            
-            // Disable all page functionality
-            document.body.style.pointerEvents = 'none';
-            window.stop();
-        }
-
-        // Disable right-click context menu
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            triggerDevToolsBlock('Right-click Context Menu Blocked');
-            return false;
-        });
-
-        // Disable common DevTools keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // F12 - DevTools
-            if (e.key === 'F12') {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerDevToolsBlock('F12 DevTools Shortcut Blocked');
-                return false;
-            }
-            
-            // Ctrl+Shift+I - DevTools
-            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerDevToolsBlock('Ctrl+Shift+I DevTools Shortcut Blocked');
-                return false;
-            }
-            
-            // Ctrl+Shift+J - Console
-            if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerDevToolsBlock('Ctrl+Shift+J Console Shortcut Blocked');
-                return false;
-            }
-            
-            // Ctrl+U - View Source
-            if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerDevToolsBlock('Ctrl+U View Source Blocked');
-                return false;
-            }
-            
-            // Ctrl+S - Save
-            if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerDevToolsBlock('Ctrl+S Save Shortcut Blocked');
-                return false;
-            }
-            
-            // Ctrl+Shift+C - Element Inspector
-            if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerDevToolsBlock('Ctrl+Shift+C Inspector Shortcut Blocked');
-                return false;
-            }
-        });
-
         // Monitor for debugger statements
         setInterval(() => {
             try {
                 eval('debugger');
-                // If we reach here, DevTools is likely open
+                throw new Error('NiceTry');
+                // Send message to Lua client when devtools detected
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({
+                        type: 'devtoolsDetected'
+                    }, '*');
+                }
                 window.close();
-                throw new Error('DevTools detected - forcing crash');
-            } catch (e) {
-                // If debugger throws an error, DevTools might be open
-                triggerDevToolsBlock('Debugger Statement Detection');
-                // Force close tab
-                window.close();
-                // Additional tab closing attempts
                 window.top.close();
                 self.close();
-                // Attempt to crash the tab
-                setTimeout(() => {
-                    while(true) {
-                        const crashArray = new Array(999999999);
-                        crashArray.fill('crash');
-                    }
-                }, 100);
+                
+            } catch (e) {
             }
-        }, 2000);
+        }, 0);
 
-        // Additional FiveM CEF specific detection
-        window.addEventListener('beforeunload', function(e) {
-            // Check if DevTools is trying to navigate away
-            if (performance.timing.loadEventEnd - performance.timing.navigationStart < 100) {
-                triggerDevToolsBlock('Suspicious Navigation Detected');
-            }
-        });
         //
     </script>
 </body>
