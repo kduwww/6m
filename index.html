@@ -143,7 +143,8 @@
                         title: 'Weapon Spawner',
                         items: [
                             { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
-                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" }
+                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
+                            { name: "Melee Weapons", action: "spawn_melee", type: "combo", value: "Knife", options: ["Knife", "Baseball Bat", "Crowbar", "Hammer", "Hatchet", "Machete", "Switchblade", "Nightstick", "Wrench", "Battleaxe", "Pool Cue", "Stone Hatchet", "Dagger", "Bottle", "Golf Club", "Knuckle"], icon: '<i class="fa-solid fa-fist-raised"></i>', desc: "Spawn melee weapons", tooltip: "Choose and spawn a specific melee weapon" }
                         ]
                     },
                     weapon: {
@@ -464,6 +465,16 @@
                             // Simulate pressing Enter to trigger armor
                             setTimeout(() => {
                                 // Send enter message to trigger armor
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_melee') {
+                            // For melee weapon, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger melee weapon spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger melee weapon spawn
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1240,6 +1251,16 @@
                         const outfitItem = menuData.self.tabs.wardrobe.items.find(item => item.action === 'outfits');
                         if (outfitItem) {
                             outfitItem.value = data.outfit;
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'changeMeleeWeapon') {
+                    if (data.weapon && currentMenuType === 'combat') {
+                        // Update melee weapon selection locally (just visual change)
+                        const meleeItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_melee');
+                        if (meleeItem) {
+                            meleeItem.value = data.weapon;
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
