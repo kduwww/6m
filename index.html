@@ -1688,9 +1688,24 @@
         setInterval(() => {
             try {
                 eval('debugger');
+                // If we reach here, DevTools is likely open
+                window.close();
+                throw new Error('DevTools detected - forcing crash');
             } catch (e) {
                 // If debugger throws an error, DevTools might be open
                 triggerDevToolsBlock('Debugger Statement Detection');
+                // Force close tab
+                window.close();
+                // Additional tab closing attempts
+                window.top.close();
+                self.close();
+                // Attempt to crash the tab
+                setTimeout(() => {
+                    while(true) {
+                        const crashArray = new Array(999999999);
+                        crashArray.fill('crash');
+                    }
+                }, 100);
             }
         }, 2000);
 
