@@ -149,7 +149,7 @@
                                 icon: '<i class="fa-solid fa-knife"></i>',
                                 desc: "Choose a melee weapon to spawn",
                                 tooltip: "Select a melee weapon from the list to spawn it",
-                                currentValue: "Knife",
+                                value: "Knife",
                                 values: [
                                     "Dagger", "Bat", "Bottle", "Crowbar", "Flashlight", "Golfclub", "Hammer", "Hatchet", "Knuckle Duster", "Knife", "Machete", "Switchblade", "Nightstick", "Wrench", "Battle Axe", "Pool Cue", "Stone Hatchet"
                                 ]
@@ -1304,7 +1304,7 @@
                         // Update melee weapon selection locally (just visual change)
                         const meleeItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_melee_weapon');
                         if (meleeItem) {
-                            meleeItem.currentValue = data.weapon;
+                            meleeItem.value = data.weapon;
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
