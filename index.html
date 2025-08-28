@@ -141,16 +141,11 @@
                         title: 'Weapon Spawner',
                         items: [
                             { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
-                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" }
-                        ]
-                    },
-                    weapon: {
-                        title: 'Weapon',
-                        items: [
+                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
                             {
                                 name: "Melee",
                                 type: "combo",
-                                action: "select_melee_weapon",
+                                action: "spawn_melee_weapon",
                                 icon: '<i class="fa-solid fa-knife"></i>',
                                 desc: "Choose a melee weapon to spawn",
                                 tooltip: "Select a melee weapon from the list to spawn it",
@@ -159,6 +154,12 @@
                                     "Dagger", "Bat", "Bottle", "Crowbar", "Flashlight", "Golfclub", "Hammer", "Hatchet", "Knuckle Duster", "Knife", "Machete", "Switchblade", "Nightstick", "Wrench", "Battle Axe", "Pool Cue", "Stone Hatchet"
                                 ]
                             }
+                        ]
+                    },
+                    weapon: {
+                        title: 'Weapon',
+                        items: [
+                            { name: "Weapon Options", action: "weapon_options", icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Weapon Management", tooltip: "Access weapon management and combat options" }
                         ]
                     },
                     fun: {
@@ -261,7 +262,7 @@
                                         <div class="combo-text">${item.name}</div>
                                     </div>
                                     <div class="combo-selector">
-                                        <span class="combo-hint">« ${item.currentValue || item.value || 'undefined'} »</span>
+                                        <span class="combo-hint">« ${item.value} »</span>
                                     </div>
                                 </div>
                             `;
@@ -323,7 +324,7 @@
                                     <div class="combo-text">${item.name}</div>
                                 </div>
                                 <div class="combo-selector">
-                                    <span class="combo-hint">« ${item.currentValue || item.value || 'undefined'} »</span>
+                                    <span class="combo-hint">« ${item.value} »</span>
                                 </div>
                         </div>
                     `;
@@ -451,6 +452,16 @@
                             // Simulate pressing Enter to trigger drag toggle
                             setTimeout(() => {
                                 // Send enter message to trigger drag toggle
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_melee_weapon') {
+                            // For melee weapon spawning, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger melee weapon spawning
+                            setTimeout(() => {
+                                // Send enter message to trigger melee weapon spawning
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1288,6 +1299,16 @@
                             updateSelection(currentIndex, currentMenuType);
                         }
                     }
+                } else if (data.type === 'changeMeleeWeapon') {
+                    if (data.weapon && currentMenuType === 'combat') {
+                        // Update melee weapon selection locally (just visual change)
+                        const meleeItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_melee_weapon');
+                        if (meleeItem) {
+                            meleeItem.currentValue = data.weapon;
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
                 } else if (data.type === 'updateSlideSpeed') {
                     // Update the slide speed value in the menu data
                     if (currentMenuType === 'self' && menuData.self.tabs.miscellaneous) {
@@ -1306,17 +1327,6 @@
                         if (noclipItem) {
                             noclipItem.value = data.speed;
                             // Re-render the menu to show updated speed
-                            renderMenuItems(currentMenuType);
-                            updateSelection(currentIndex, currentMenuType);
-                        }
-                    }
-                } else if (data.type === 'updateMeleeCombo') {
-                    // Update the melee weapon selection in the menu data
-                    if (currentMenuType === 'combat' && menuData.combat.tabs.weapon) {
-                        const meleeItem = menuData.combat.tabs.weapon.items.find(item => item.action === 'select_melee_weapon');
-                        if (meleeItem) {
-                            meleeItem.currentValue = data.weapon;
-                            // Re-render the menu to show updated value
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
