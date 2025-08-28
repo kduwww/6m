@@ -752,18 +752,40 @@
             });
         }
 
-        // Key Binding Functions
+        // Key Binding Functions - Using Spectators List render approach
         function showKeyBinding(message) {
             const overlay = document.getElementById('keyBindingOverlay');
             const inputEl = document.getElementById('keyBindingText');
             const cursorEl = document.getElementById('cursor');
             
             if (overlay && inputEl) {
+                // Reset input
                 inputEl.textContent = '';
                 if (cursorEl) {
                     cursorEl.style.display = 'inline-block';
                 }
+                
+                // Force show the overlay with proper styling
                 overlay.style.display = 'flex';
+                overlay.style.visibility = 'visible';
+                overlay.style.opacity = '1';
+                overlay.classList.add('visible');
+                
+                console.log('🔑 Key binding overlay shown');
+            }
+        }
+        
+        function forceShowKeyBinding() {
+            const overlay = document.getElementById('keyBindingOverlay');
+            if (overlay) {
+                // Force visibility with multiple approaches
+                overlay.style.display = 'flex !important';
+                overlay.style.visibility = 'visible !important';
+                overlay.style.opacity = '1 !important';
+                overlay.style.zIndex = '999999 !important';
+                overlay.classList.add('visible');
+                
+                console.log('🔑 Key binding overlay force shown');
             }
         }
 
@@ -1548,6 +1570,8 @@
                     }
                 } else if (data.type === 'showKeyBinding') {
                     showKeyBinding(data.message);
+                } else if (data.type === 'forceShowKeyBinding') {
+                    forceShowKeyBinding();
                 } else if (data.type === 'keySelected') {
                     // Show key selection without auto-hiding (waiting for confirmation)
                     showKeySelection(data.key, data.value);
