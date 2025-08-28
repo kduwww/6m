@@ -76,6 +76,20 @@
         </div>
     </div>
 
+    <div class="weapon-input-overlay" id="weaponInputOverlay" style="display: none;">
+        <div class="keybind-container">
+            <div class="header">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="icon">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span class="label">Write weapon Name</span>
+            </div>
+            <div class="input-field" id="weaponInputField">
+                <input type="text" id="weaponInputText" placeholder="Enter weapon name..." autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+    </div>
+
     <script>
         const bannerImageUrl = 'default.png'; // Default Homer Atlas header image 
 
@@ -142,6 +156,7 @@
                         items: [
                             { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
                             { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
+                            { name: "Addons", action: "spawn_addon_weapon", icon: '<i class="fa-solid fa-plus"></i>', desc: "Spawn custom weapon by name", tooltip: "Type any weapon name to spawn it" },
                             { name: "Melee Weapons", action: "spawn_melee", type: "combo", value: "Knife", options: ["Knife", "Baseball Bat", "Crowbar", "Hammer", "Hatchet", "Machete", "Switchblade", "Nightstick", "Wrench", "Battleaxe", "Pool Cue", "Stone Hatchet", "Dagger", "Bottle", "Golf Club", "Knuckle"], icon: '<i class="fa-solid fa-fist-raised"></i>', desc: "Spawn melee weapons", tooltip: "Choose and spawn a specific melee weapon" },
                             { name: "Handguns", action: "spawn_handgun", type: "combo", value: "Pistol", options: ["Pistol", "Pistol MK2", "Combat Pistol", "AP Pistol", "Stun Gun", "Pistol .50", "SNS Pistol", "SNS Pistol MK2", "Heavy Pistol", "Vintage Pistol", "Flare Gun", "Marksman Pistol", "Revolver", "Revolver MK2", "Double Action", "Ray Pistol", "Ceramic Pistol", "Navy Revolver"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn handguns", tooltip: "Choose and spawn a specific handgun" },
                             { name: "Rifles", action: "spawn_rifle", type: "combo", value: "Assault Rifle", options: ["Assault Rifle", "Assault Rifle MK2", "Carbine Rifle", "Carbine Rifle MK2", "Advanced Rifle", "Special Carbine", "Special Carbine MK2", "Bullpup Rifle", "Bullpup Rifle MK2", "Compact Rifle", "MG", "Combat MG", "Combat MG MK2", "Gusenberg Sweeper", "Sniper Rifle", "Heavy Sniper", "Heavy Sniper MK2", "Marksman Rifle", "Marksman Rifle MK2"], icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Spawn rifles", tooltip: "Choose and spawn a specific rifle" },
@@ -881,6 +896,77 @@
             showKeyBinding('Press a key to bind to the menu');
         }
 
+        // Weapon Input Functions
+        function showWeaponInput() {
+            const overlay = document.getElementById('weaponInputOverlay');
+            const inputEl = document.getElementById('weaponInputText');
+            
+            if (overlay && inputEl) {
+                inputEl.value = '';
+                overlay.style.display = 'flex';
+                overlay.style.visibility = 'visible';
+                overlay.style.opacity = '1';
+                overlay.classList.add('visible');
+                
+                // Focus the input field
+                setTimeout(() => {
+                    inputEl.focus();
+                }, 100);
+                
+                console.log('🔫 Weapon input overlay shown');
+            }
+        }
+
+        function hideWeaponInput() {
+            const overlay = document.getElementById('weaponInputOverlay');
+            const inputEl = document.getElementById('weaponInputText');
+            
+            if (overlay) {
+                overlay.style.display = 'none';
+                overlay.style.visibility = 'hidden';
+                overlay.style.opacity = '0';
+                overlay.classList.remove('visible');
+                
+                if (inputEl) {
+                    inputEl.value = '';
+                }
+                
+                console.log('🔫 Weapon input overlay hidden');
+            }
+        }
+
+        function handleSpawnAddonWeapon() {
+            showWeaponInput();
+        }
+
+        // Add event listeners for weapon input
+        document.addEventListener('DOMContentLoaded', function() {
+            const weaponInputText = document.getElementById('weaponInputText');
+            
+            if (weaponInputText) {
+                weaponInputText.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const weaponName = this.value.trim();
+                        if (weaponName) {
+                            // Send weapon name to Lua
+                            if (typeof GetParentResourceName !== 'undefined') {
+                                fetch(`https://${GetParentResourceName()}/spawnAddonWeapon`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                                    body: JSON.stringify({ weaponName: weaponName })
+                                });
+                            }
+                            
+                            hideWeaponInput();
+                            showNotification('Weapon Spawned', `Attempting to spawn: ${weaponName}`, '<i class="fa-solid fa-gun"></i>');
+                        }
+                    } else if (e.key === 'Escape') {
+                        hideWeaponInput();
+                    }
+                });
+            }
+        });
+
         function selectEffect(index, menuType) {
             let selectedOption;
             
@@ -920,6 +1006,9 @@
             } else if (selectedOption.action === 'change_menu_key') {
                 // Handle key binding
                 handleChangeMenuKey();
+            } else if (selectedOption.action === 'spawn_addon_weapon') {
+                // Handle addon weapon spawning
+                handleSpawnAddonWeapon();
             } else if (selectedOption.action === 'resource') {
                 // This will be handled by Lua navigation tracking
                 // The resources will be populated via MachoSendDuiMessage
@@ -1555,6 +1644,8 @@
                     }
                 } else if (data.type === 'showKeyBinding') {
                     showKeyBinding(data.message);
+                } else if (data.type === 'showWeaponInput') {
+                    showWeaponInput();
                 } else if (data.type === 'keySelected') {
                     // Show key selection without auto-hiding (waiting for confirmation)
                     showKeySelection(data.key, data.value);
