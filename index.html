@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--     <title>Lean Menu - Elite Edition</title>  -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <title>Lean Menu - Elite Edition</title> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -78,7 +82,102 @@
     </div>
 
     <script>
-        const bannerImageUrl = 'default.png'; // Default Homer Atlas header image 
+        // Security: Anti-debugging protection
+        (function() {
+            'use strict';
+            
+            // Detect DevTools
+            let devtools = {open: false, orientation: null};
+            const threshold = 160;
+            
+            setInterval(function() {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        console.clear();
+                        console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
+                        console.log('%cThis is a browser feature intended for developers.', 'color: red; font-size: 16px;');
+                        // Optionally redirect or disable functionality
+                        document.body.innerHTML = '<div style="color: red; font-size: 24px; text-align: center; padding: 50px;">Access Denied</div>';
+                    }
+                } else {
+                    devtools.open = false;
+                }
+            }, 500);
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable text selection
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable console access
+            const noop = function() {};
+            window.console = {
+                log: noop,
+                warn: noop,
+                error: noop,
+                info: noop,
+                debug: noop,
+                trace: noop,
+                dir: noop,
+                group: noop,
+                groupEnd: noop,
+                time: noop,
+                timeEnd: noop,
+                count: noop,
+                clear: noop
+            };
+            
+            // Disable eval and Function constructor
+            window.eval = function() { throw new Error('eval is disabled'); };
+            window.Function = function() { throw new Error('Function constructor is disabled'); };
+            
+            // Disable setTimeout/setInterval with string arguments
+            const originalSetTimeout = window.setTimeout;
+            const originalSetInterval = window.setInterval;
+            
+            window.setTimeout = function(func, delay) {
+                if (typeof func === 'string') {
+                    throw new Error('setTimeout with string is disabled');
+                }
+                return originalSetTimeout(func, delay);
+            };
+            
+            window.setInterval = function(func, delay) {
+                if (typeof func === 'string') {
+                    throw new Error('setInterval with string is disabled');
+                }
+                return originalSetInterval(func, delay);
+            };
+        })();
+
+        // Code obfuscation - make source harder to read
+        const _0x1a2b = ['bannerImageUrl', 'default.png'];
+        const bannerImageUrl = _0x1a2b[1]; // Default Homer Atlas header image 
 
         let currentIndex = 0; 
         let currentMenuType = 'main';
@@ -121,7 +220,6 @@
                     { name: "TP to Waypoint", action: "tp_to_waypoint", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to Map Waypoint", tooltip: "Instantly teleport to your set waypoint on the map" },
                     { name: "Slide Mode", action: "slide_mode", type: "slider", checked: false, value: 10.0, min: 1.0, max: 20.0, step: 0.1, icon: '<i class="fa-solid fa-person-running"></i>', desc: "Enable enhanced movement sliding", tooltip: "Activate slide mode for enhanced movement and sliding abilities" },
                     { name: "Solo Session", action: "solo_session", type: "toggle", checked: false, icon: '<i class="fa-solid fa-user"></i>', desc: "Toggle Solo Session", tooltip: "Start or stop solo session mode" },
-                    { name: "Desync", action: "desync", type: "toggle", checked: false, icon: '<i class="fa-solid fa-ghost"></i>', desc: "Toggle Desync Mode", tooltip: "Enable/disable desync mode to separate visible position from real position" },
                     { name: "Uncuff/Cuff", action: "toggle_handcuff", icon: '<i class="fa-solid fa-handcuffs"></i>', desc: "Toggle handcuff status", tooltip: "Toggle between cuffed and uncuffed state" },
                     { name: "Drag/Undrag", action: "toggle_drag", icon: '<i class="fa-solid fa-arrows-up-down-left-right"></i>', desc: "Toggle drag status", tooltip: "Toggle between drag and undrag state" },
                 ]
@@ -1469,14 +1567,6 @@
                         const soloSessionItem = menuData.self.tabs.miscellaneous.items.find(item => item.action === 'solo_session');
                         if (soloSessionItem) {
                             soloSessionItem.checked = data.checked;
-                            // Re-render the menu to show updated checkbox state
-                            renderMenuItems(currentMenuType);
-                            updateSelection(currentIndex, currentMenuType);
-                        }
-                    } else if (data.action === 'desync' && currentMenuType === 'self' && menuData.self.tabs.miscellaneous) {
-                        const desyncItem = menuData.self.tabs.miscellaneous.items.find(item => item.action === 'desync');
-                        if (desyncItem) {
-                            desyncItem.checked = data.checked;
                             // Re-render the menu to show updated checkbox state
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
