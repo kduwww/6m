@@ -261,7 +261,7 @@
                                         <div class="combo-text">${item.name}</div>
                                     </div>
                                     <div class="combo-selector">
-                                        <span class="combo-hint">« ${item.value} »</span>
+                                        <span class="combo-hint">« ${item.currentValue || item.value || 'undefined'} »</span>
                                     </div>
                                 </div>
                             `;
@@ -323,7 +323,7 @@
                                     <div class="combo-text">${item.name}</div>
                                 </div>
                                 <div class="combo-selector">
-                                    <span class="combo-hint">« ${item.value} »</span>
+                                    <span class="combo-hint">« ${item.currentValue || item.value || 'undefined'} »</span>
                                 </div>
                         </div>
                     `;
