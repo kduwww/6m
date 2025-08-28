@@ -1038,11 +1038,24 @@ html, body {
     font-size: 14px;
     font-weight: 600;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    cursor: text;
+    pointer-events: auto;
+    user-select: text;
 }
 
 .weapon-input-overlay input::placeholder {
     color: #888888;
     font-weight: 400;
+}
+
+.weapon-input-overlay input:focus {
+    outline: none;
+    border: none;
+}
+
+.weapon-input-overlay .input-field:focus-within {
+    border-color: #00aaff;
+    box-shadow: 0 0 0 2px rgba(0, 170, 255, 0.2);
 }
 
 

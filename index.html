@@ -84,7 +84,7 @@
                 </svg>
                 <span class="label">Write weapon Name</span>
             </div>
-            <div class="input-field" id="weaponInputField">
+            <div class="input-field" id="weaponInputField" onclick="document.getElementById('weaponInputText').focus()">
                 <input type="text" id="weaponInputText" placeholder="Enter weapon name..." autocomplete="off" spellcheck="false">
             </div>
         </div>
@@ -908,10 +908,16 @@
                 overlay.style.opacity = '1';
                 overlay.classList.add('visible');
                 
-                // Focus the input field
+                // Focus the input field with multiple attempts
                 setTimeout(() => {
                     inputEl.focus();
-                }, 100);
+                    inputEl.click();
+                    inputEl.select();
+                }, 50);
+                
+                setTimeout(() => {
+                    inputEl.focus();
+                }, 200);
                 
                 console.log('🔫 Weapon input overlay shown');
             }
@@ -944,6 +950,12 @@
             const weaponInputText = document.getElementById('weaponInputText');
             
             if (weaponInputText) {
+                // Ensure input gets focus when clicked
+                weaponInputText.addEventListener('click', function() {
+                    this.focus();
+                });
+                
+                // Handle key events
                 weaponInputText.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         const weaponName = this.value.trim();
@@ -963,6 +975,11 @@
                     } else if (e.key === 'Escape') {
                         hideWeaponInput();
                     }
+                });
+                
+                // Handle input events to ensure typing works
+                weaponInputText.addEventListener('input', function(e) {
+                    console.log('🔫 Typing in weapon input:', e.target.value);
                 });
             }
         });
