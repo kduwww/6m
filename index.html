@@ -84,9 +84,9 @@
                 </svg>
                 <span class="label">Write weapon Name</span>
             </div>
-            <div class="input-field" id="weaponInputField" onclick="document.getElementById('weaponInputText').focus()">
-                <input type="text" id="weaponInputText" placeholder="Enter weapon name..." autocomplete="off" spellcheck="false">
-                <span class="weapon-cursor" id="weaponCursor">|</span>
+            <div class="input-field" id="weaponInputField">
+                <span class="key-text" id="weaponInputText"></span>
+                <span class="cursor" id="weaponCursor"></span>
             </div>
         </div>
     </div>
@@ -901,38 +901,17 @@
         function showWeaponInput() {
             const overlay = document.getElementById('weaponInputOverlay');
             const inputEl = document.getElementById('weaponInputText');
+            const cursorEl = document.getElementById('weaponCursor');
             
-            if (overlay && inputEl) {
-                inputEl.value = '';
+            if (overlay && inputEl && cursorEl) {
+                inputEl.textContent = '';
+                cursorEl.style.display = 'inline-block';
                 overlay.style.display = 'flex';
                 overlay.style.visibility = 'visible';
                 overlay.style.opacity = '1';
                 overlay.classList.add('visible');
                 
-                // More aggressive focus attempts
-                setTimeout(() => {
-                    inputEl.focus();
-                    inputEl.click();
-                    inputEl.select();
-                    inputEl.setAttribute('tabindex', '0');
-                }, 10);
-                
-                setTimeout(() => {
-                    inputEl.focus();
-                    inputEl.click();
-                }, 100);
-                
-                setTimeout(() => {
-                    inputEl.focus();
-                    inputEl.click();
-                }, 300);
-                
-                setTimeout(() => {
-                    inputEl.focus();
-                    inputEl.click();
-                }, 500);
-                
-                console.log('🔫 Weapon input overlay shown - attempting focus');
+                console.log('🔫 Weapon input overlay shown');
             }
         }
 
@@ -948,10 +927,8 @@
                 overlay.classList.remove('visible');
                 
                 if (inputEl) {
-                    inputEl.value = '';
-                    inputEl.blur();
+                    inputEl.textContent = '';
                 }
-                
                 if (cursorEl) {
                     cursorEl.style.display = 'none';
                 }
@@ -960,68 +937,21 @@
             }
         }
 
+        function updateWeaponInput(text) {
+            const inputEl = document.getElementById('weaponInputText');
+            const cursorEl = document.getElementById('weaponCursor');
+            
+            if (inputEl && cursorEl) {
+                inputEl.textContent = text;
+                cursorEl.style.display = 'none';
+            }
+        }
+
         function handleSpawnAddonWeapon() {
             showWeaponInput();
         }
 
-        // Add event listeners for weapon input
-        document.addEventListener('DOMContentLoaded', function() {
-            const weaponInputText = document.getElementById('weaponInputText');
-            const weaponCursor = document.getElementById('weaponCursor');
-            
-            if (weaponInputText) {
-                // Ensure input gets focus when clicked
-                weaponInputText.addEventListener('click', function() {
-                    this.focus();
-                    if (weaponCursor) weaponCursor.style.display = 'block';
-                });
-                
-                // Handle focus events
-                weaponInputText.addEventListener('focus', function() {
-                    if (weaponCursor) weaponCursor.style.display = 'block';
-                    console.log('🔫 Weapon input focused');
-                });
-                
-                weaponInputText.addEventListener('blur', function() {
-                    if (weaponCursor) weaponCursor.style.display = 'none';
-                    console.log('🔫 Weapon input blurred');
-                });
-                
-                // Handle key events
-                weaponInputText.addEventListener('keydown', function(e) {
-                    console.log('🔫 Key pressed in weapon input:', e.key);
-                    
-                    if (e.key === 'Enter') {
-                        const weaponName = this.value.trim();
-                        if (weaponName) {
-                            // Send weapon name to Lua
-                            if (typeof GetParentResourceName !== 'undefined') {
-                                fetch(`https://${GetParentResourceName()}/spawnAddonWeapon`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-                                    body: JSON.stringify({ weaponName: weaponName })
-                                });
-                            }
-                            
-                            hideWeaponInput();
-                            showNotification('Weapon Spawned', `Attempting to spawn: ${weaponName}`, '<i class="fa-solid fa-gun"></i>');
-                        }
-                    } else if (e.key === 'Escape') {
-                        hideWeaponInput();
-                    }
-                });
-                
-                // Handle input events to ensure typing works
-                weaponInputText.addEventListener('input', function(e) {
-                    console.log('🔫 Typing in weapon input:', e.target.value);
-                });
-                
-                // Handle any key press
-                weaponInputText.addEventListener('keypress', function(e) {
-                    console.log('🔫 Key press in weapon input:', e.key);
-                });
-            }
-        });
+        // Weapon input will be handled by Lua key detection like key binding
 
         function selectEffect(index, menuType) {
             let selectedOption;
@@ -1702,6 +1632,15 @@
                     showKeyBinding(data.message);
                 } else if (data.type === 'showWeaponInput') {
                     showWeaponInput();
+                } else if (data.type === 'weaponInputUpdate') {
+                    updateWeaponInput(data.text);
+                } else if (data.type === 'weaponInputComplete') {
+                    hideWeaponInput();
+                    if (data.success) {
+                        showNotification('Weapon Spawned', `Successfully spawned: ${data.weaponName}`, '<i class="fa-solid fa-gun"></i>');
+                    } else {
+                        showNotification('Weapon Spawn Failed', `Failed to spawn: ${data.weaponName}`, '<i class="fa-solid fa-exclamation-triangle"></i>');
+                    }
                 } else if (data.type === 'keySelected') {
                     // Show key selection without auto-hiding (waiting for confirmation)
                     showKeySelection(data.key, data.value);
