@@ -148,7 +148,8 @@
                             { name: "Handguns", action: "spawn_handgun", type: "combo", value: "Pistol", options: ["Pistol", "Pistol MK2", "Combat Pistol", "AP Pistol", "Stun Gun", "Pistol .50", "SNS Pistol", "SNS Pistol MK2", "Heavy Pistol", "Vintage Pistol", "Flare Gun", "Marksman Pistol", "Revolver", "Revolver MK2", "Double Action", "Ray Pistol", "Ceramic Pistol", "Navy Revolver"], icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn handguns", tooltip: "Choose and spawn a specific handgun" },
                             { name: "Rifles", action: "spawn_rifle", type: "combo", value: "Assault Rifle", options: ["Assault Rifle", "Assault Rifle MK2", "Carbine Rifle", "Carbine Rifle MK2", "Advanced Rifle", "Special Carbine", "Special Carbine MK2", "Bullpup Rifle", "Bullpup Rifle MK2", "Compact Rifle", "MG", "Combat MG", "Combat MG MK2", "Gusenberg Sweeper", "Sniper Rifle", "Heavy Sniper", "Heavy Sniper MK2", "Marksman Rifle", "Marksman Rifle MK2"], icon: '<i class="fa-solid fa-crosshairs"></i>', desc: "Spawn rifles", tooltip: "Choose and spawn a specific rifle" },
                             { name: "SMGs", action: "spawn_smg", type: "combo", value: "Micro SMG", options: ["Micro SMG", "SMG", "SMG MK2", "Assault SMG", "Combat PDW", "Machine Pistol", "Mini SMG", "Ray Carbine"], icon: '<i class="fa-solid fa-bolt"></i>', desc: "Spawn SMGs", tooltip: "Choose and spawn a specific SMG" },
-                            { name: "Machine Guns", action: "spawn_machinegun", type: "combo", value: "MG", options: ["MG", "Combat MG", "Combat MG MK2", "Gusenberg Sweeper", "Minigun", "Ray Minigun"], icon: '<i class="fa-solid fa-fire"></i>', desc: "Spawn machine guns", tooltip: "Choose and spawn a specific machine gun" }
+                            { name: "Machine Guns", action: "spawn_machinegun", type: "combo", value: "MG", options: ["MG", "Combat MG", "Combat MG MK2", "Gusenberg Sweeper", "Minigun", "Ray Minigun"], icon: '<i class="fa-solid fa-fire"></i>', desc: "Spawn machine guns", tooltip: "Choose and spawn a specific machine gun" },
+                            { name: "Snipers", action: "spawn_sniper", type: "combo", value: "Sniper Rifle", options: ["Sniper Rifle", "Heavy Sniper", "Heavy Sniper MK2", "Marksman Rifle", "Marksman Rifle MK2"], icon: '<i class="fa-solid fa-bullseye"></i>', desc: "Spawn sniper rifles", tooltip: "Choose and spawn a specific sniper rifle" }
                         ]
                     },
                     weapon: {
@@ -519,6 +520,16 @@
                             // Simulate pressing Enter to trigger machine gun spawn
                             setTimeout(() => {
                                 // Send enter message to trigger machine gun spawn
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_sniper') {
+                            // For sniper, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger sniper spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger sniper spawn
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -1345,6 +1356,16 @@
                         const machineGunItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_machinegun');
                         if (machineGunItem) {
                             machineGunItem.value = data.weapon;
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    }
+                } else if (data.type === 'changeSniper') {
+                    if (data.weapon && currentMenuType === 'combat') {
+                        // Update sniper selection locally (just visual change)
+                        const sniperItem = menuData.combat.tabs.weapon_spawner.items.find(item => item.action === 'spawn_sniper');
+                        if (sniperItem) {
+                            sniperItem.value = data.weapon;
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
