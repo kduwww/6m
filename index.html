@@ -141,7 +141,14 @@
                         title: 'Weapon Spawner',
                         items: [
                             { name: "Give All Weapons", action: "give_all_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Get all weapons with max ammo", tooltip: "Request all weapons with maximum ammunition" },
-                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" }
+                            { name: "Remove All Weapons", action: "remove_all_weapons", icon: '<i class="fa-solid fa-trash"></i>', desc: "Remove all weapons from inventory", tooltip: "Remove all weapons from your inventory" },
+                            { name: "Spoof weapons", action: "toggle_spoof_weapons", type: "toggle", checked: false, icon: '<i class="fa-solid fa-mask"></i>', desc: "Toggle weapon spoofing", tooltip: "Enable/disable weapon spoofing to hide weapon modifications" },
+                            { name: "Pickup", action: "toggle_pickup_weapons", type: "toggle", checked: false, icon: '<i class="fa-solid fa-hand-holding"></i>', desc: "Spawn weapons as pickups", tooltip: "Toggle spawning weapons as pickups instead of giving directly" },
+                            { name: "Addons", action: "spawn_weapon_input", icon: '<i class="fa-solid fa-keyboard"></i>', desc: "Spawn weapon by name", tooltip: "Enter weapon name to spawn custom weapons" },
+                            { name: "Melee", action: "spawn_melee_weapons", icon: '<i class="fa-solid fa-sword"></i>', desc: "Spawn all melee weapons", tooltip: "Spawn all melee weapons in your inventory" },
+                            { name: "Handguns", action: "spawn_handgun_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn all handgun weapons", tooltip: "Spawn all handgun weapons in your inventory" },
+                            { name: "SMG", action: "spawn_smg_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn all SMG weapons", tooltip: "Spawn all SMG weapons in your inventory" },
+                            { name: "Rifles", action: "spawn_rifle_weapons", icon: '<i class="fa-solid fa-gun"></i>', desc: "Spawn all rifle weapons", tooltip: "Spawn all rifle weapons in your inventory" }
                         ]
                     },
                     weapon: {
@@ -440,6 +447,69 @@
                             // Simulate pressing Enter to trigger drag toggle
                             setTimeout(() => {
                                 // Send enter message to trigger drag toggle
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'toggle_spoof_weapons') {
+                            // For spoof weapons toggle, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger spoof weapons toggle
+                            setTimeout(() => {
+                                // Send enter message to trigger spoof weapons toggle
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'toggle_pickup_weapons') {
+                            // For pickup weapons toggle, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger pickup weapons toggle
+                            setTimeout(() => {
+                                // Send enter message to trigger pickup weapons toggle
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_weapon_input') {
+                            // Show weapon input dialog
+                            showWeaponInputDialog();
+                        } else if (itemData.action === 'spawn_melee_weapons') {
+                            // For melee weapons, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger melee weapons spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger melee weapons spawn
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_handgun_weapons') {
+                            // For handgun weapons, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger handgun weapons spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger handgun weapons spawn
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_smg_weapons') {
+                            // For SMG weapons, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger SMG weapons spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger SMG weapons spawn
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'spawn_rifle_weapons') {
+                            // For rifle weapons, select the item and immediately trigger
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger rifle weapons spawn
+                            setTimeout(() => {
+                                // Send enter message to trigger rifle weapons spawn
                                 window.postMessage({
                                     type: 'enter'
                                 }, '*');
@@ -938,6 +1008,26 @@
             }
         }
 
+        function GetParentResourceName() {
+            return window.location.hostname;
+        }
+
+        function showWeaponInputDialog() {
+            const weaponName = prompt('Enter weapon name to spawn:');
+            if (weaponName && weaponName.trim() !== '') {
+                // Send weapon spawn request to Lua via NUI callback
+                fetch(`https://${GetParentResourceName()}/spawnWeaponByName`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        weaponName: weaponName.trim()
+                    })
+                });
+            }
+        }
+
         function showNotification(title, message, iconHtml = '<i class="fa-solid fa-info-circle"></i>') {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -1367,6 +1457,10 @@
                     setHeaderImage(data.imageUrl); 
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
+                } else if (data.type === 'spawnWeaponByName') {
+                    // Handle weapon spawn request from input dialog
+                    console.log('Weapon spawn request:', data.weaponName);
+                    // This will be handled by Lua when the message is sent
                 }
             } catch (error) {
                 console.error('Error processing message from FiveM:', error);
