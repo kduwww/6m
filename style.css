@@ -1041,6 +1041,9 @@ html, body {
     cursor: text;
     pointer-events: auto;
     user-select: text;
+    padding: 0;
+    margin: 0;
+    text-align: center;
 }
 
 .weapon-input-overlay input::placeholder {
