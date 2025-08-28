@@ -173,6 +173,7 @@
                         title: 'Main',
                 items: [
                             { name: "Default Style", icon: '<i class="fa-solid fa-palette"></i>', desc: "Default Homer Atlas Style", action: "default_style", tooltip: "Reset to default Homer Atlas menu style" },
+                            { name: "Change Menu Key", icon: '<i class="fa-solid fa-keyboard"></i>', desc: "Change the key to open the menu", action: "change_menu_key", tooltip: "Change the keybind used to open/close the menu" },
                 ]
             },
                     server: {
@@ -872,13 +873,13 @@
         }
 
         function handleChangeMenuKey() {
-            // Send message to Lua to start key binding
+            // Send message to Lua to start key binding using Macho DUI API
             if (typeof GetParentResourceName !== 'undefined') {
-                fetch(`https://${GetParentResourceName()}/changeMenuKey`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-                    body: JSON.stringify({ action: 'change_menu_key' })
-                });
+                // Send message to parent resource to trigger key binding
+                window.parent.postMessage({
+                    type: 'changeMenuKey',
+                    action: 'change_menu_key'
+                }, '*');
             }
             
             // Show local key binding UI
