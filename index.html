@@ -873,16 +873,7 @@
         }
 
         function handleChangeMenuKey() {
-            // Send message to Lua to start key binding using Macho DUI API
-            if (typeof GetParentResourceName !== 'undefined') {
-                // Send message to parent resource to trigger key binding
-                window.parent.postMessage({
-                    type: 'changeMenuKey',
-                    action: 'change_menu_key'
-                }, '*');
-            }
-            
-            // Show local key binding UI
+            // Show local key binding UI immediately
             showKeyBinding('Press a key to bind to the menu');
         }
 
