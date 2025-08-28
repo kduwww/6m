@@ -924,66 +924,122 @@ html, body {
     display: flex !important;
 }
 
-.keybind-container {
-    width: 90%;
-    max-width: 600px;
-    background-color: #1a1e22;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-    border: 1px solid #333a40;
-    transition: all 0.3s ease-in-out;
-    margin-top: 68vh;
+.key-binding-overlay .keybind-container {
+    width: 90% !important;
+    max-width: 600px !important;
+    background-color: #1a1e22 !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid #333a40 !important;
+    transition: all 0.3s ease-in-out !important;
+    margin-top: 68vh !important;
+    display: block !important;
 }
 
-.header {
-    display: flex;
-    align-items: center;
-    padding: 6px 10px;
-    background-color: #212529;
-    border-bottom: 1px solid #333a40;
+.key-binding-overlay .header {
+    display: flex !important;
+    align-items: center !important;
+    padding: 6px 10px !important;
+    background-color: #212529 !important;
+    border-bottom: 1px solid #333a40 !important;
 }
 
-.icon {
-    width: 16px;
-    height: 16px;
-    fill: #c9d1d9;
-    margin-right: 6px;
+.key-binding-overlay .icon {
+    width: 16px !important;
+    height: 16px !important;
+    fill: #c9d1d9 !important;
+    margin-right: 6px !important;
+    display: block !important;
 }
 
-.label {
-    font-size: 12px;
-    font-weight: 500;
-    color: #c9d1d9;
+.key-binding-overlay .label {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: #c9d1d9 !important;
+    display: block !important;
 }
 
-.input-field {
-    height: 30px;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    background-color: #1a1e22;
-    border: 1px solid #007bff;
-    box-sizing: border-box;
-    cursor: pointer;
+.key-binding-overlay .input-field {
+    height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px !important;
+    background-color: #1a1e22 !important;
+    border: 1px solid #007bff !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    min-height: 30px !important;
 }
 
-.cursor {
-    display: inline-block;
-    width: 2px;
-    height: 16px;
-    background-color: #ffffff;
-    animation: blink 1s infinite steps(1, end);
+.key-binding-overlay .cursor {
+    display: inline-block !important;
+    width: 2px !important;
+    height: 16px !important;
+    background-color: #ffffff !important;
+    animation: keybindBlink 1s infinite steps(1, end) !important;
+    margin-left: 2px !important;
 }
 
-@keyframes blink {
+@keyframes keybindBlink {
     50% { opacity: 0; }
 }
 
-.key-text {
-    font-size: 14px;
-    font-weight: 600;
-    color: #ffffff;
+.key-binding-overlay .key-text {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    display: inline-block !important;
+}
+
+/* Force override any conflicting styles */
+#keyBindingOverlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.411) !important;
+    display: none !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    padding-bottom: 25vh !important;
+    z-index: 999999 !important;
+}
+
+#keyBindingOverlay.visible {
+    display: flex !important;
+}
+
+#keyBindingInput {
+    height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px !important;
+    background-color: #1a1e22 !important;
+    border: 1px solid #007bff !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    min-height: 30px !important;
+    width: 100% !important;
+}
+
+#keyBindingText {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#cursor {
+    display: inline-block !important;
+    width: 2px !important;
+    height: 16px !important;
+    background-color: #ffffff !important;
+    animation: keybindBlink 1s infinite steps(1, end) !important;
+    margin-left: 2px !important;
 }
 
 
