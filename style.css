@@ -363,8 +363,7 @@ html, body {
 
 .notification {
     background: rgba(25, 25, 25, 0.95);
-    /* This is the new blue border on the left side */
-    border-left: 4px solid #007bff;
+    border-left: 4px solid #007bff; /* هذا هو الخط الأزرق */
     border-top: 1px solid rgba(0, 0, 0, 0); 
     border-right: 1px solid rgba(0, 0, 0, 0);
     border-bottom: 1px solid rgba(0, 0, 0, 0); 
