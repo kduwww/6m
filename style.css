@@ -354,7 +354,7 @@ html, body {
 .notification-container {
     position: fixed;
     bottom: 30px;
-    right: 30px;
+    left: 30px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -362,21 +362,32 @@ html, body {
 }
 
 .notification {
-    background: rgba(25, 25, 25, 0.95);
-    border: 1px solid rgba(0, 123, 255, 0.4); /* Changed to blue */
-    padding: 14px 18px;
-    border-radius: 10px;
-    min-width: 260px;
-    max-width: 320px;
-    box-shadow:
-        0 6px 20px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(0, 123, 255, 0.05); /* Changed to blue */
+    background: #15191d;
+    border: none;
+    padding: 10px 0 10px 0;
+    border-radius: 0 0 0 0;
+    min-width: 320px;
+    max-width: 340px;
+    box-shadow: none;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     animation: notificationFadeIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     opacity: 0;
     transform: translateY(10px);
-    position: relative; /* Added for timer positioning */
+    position: relative;
+    overflow: visible;
+}
+
+.notification::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 7px;
+    background: #1976d2;
+    border-radius: 4px 0 0 4px;
 }
 
 .notification.fade-out {
@@ -406,48 +417,60 @@ html, body {
 
 .notification-content {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex: 1;
+    padding-left: 18px;
+    padding-right: 12px;
 }
 
 .notification-icon {
-    font-size: 24px; /* Slightly increased for better visibility */
-    margin-right: 12px; /* Slightly increased margin */
-    color: #007bff; /* Changed to blue */
+    font-size: 32px;
+    margin-right: 12px;
+    color: #1976d2;
     text-shadow: none;
     animation: none;
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .notification-text {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .notification-title {
     font-family: 'Roboto', sans-serif;
-    font-size: 16px; /* Slightly increased for better readability */
-    font-weight: 700;
-    color: #ffffff;
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
     margin-bottom: 2px;
     text-shadow: none;
+    line-height: 1.1;
 }
 
 .notification-message {
     font-family: 'Roboto', sans-serif;
-    font-size: 13px; /* Slightly increased for better readability */
-    font-weight: 500;
-    color: #8ab4f8; /* Changed to a lighter blue for contrast */
+    font-size: 14px;
+    font-weight: 400;
+    color: #bfc7d5;
     text-shadow: none;
+    line-height: 1.1;
 }
 
 .notification-timer {
-    width: 100%;
-    height: 3px; /* Slightly increased thickness */
-    background: #007bff; /* Changed to blue */
+    width: calc(100% - 7px);
+    height: 4px;
+    background: #1976d2;
     position: absolute;
     bottom: 0;
-    left: 0;
+    left: 7px;
     animation: timerProgress 4s linear forwards;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 4px 0;
 }
 
 
