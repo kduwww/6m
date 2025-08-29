@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Can Love? - Elite Edition</title> 
+    <title>Lean Menu - Elite Edition</title> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -85,7 +85,8 @@
                 <span class="label">Write weapon Name</span>
             </div>
             <div class="input-field" id="weaponInputField">
-                <input type="text" id="weaponInputText" placeholder="Enter weapon name..." autocomplete="off" spellcheck="false" maxlength="50">
+                <span class="key-text" id="weaponInputText"></span>
+                <span class="cursor" id="weaponCursor"></span>
             </div>
         </div>
     </div>
@@ -896,33 +897,28 @@
             showKeyBinding('Press a key to bind to the menu');
         }
 
-                // Weapon Input Functions
+        // Weapon Input Functions
         function showWeaponInput() {
             const overlay = document.getElementById('weaponInputOverlay');
             const inputEl = document.getElementById('weaponInputText');
+            const cursorEl = document.getElementById('weaponCursor');
             
-            if (overlay && inputEl) {
-                // Clear the input field
-                inputEl.value = '';
-                
+            if (overlay && inputEl && cursorEl) {
+                inputEl.textContent = '';
+                cursorEl.style.display = 'inline-block';
                 overlay.style.display = 'flex';
                 overlay.style.visibility = 'visible';
                 overlay.style.opacity = '1';
                 overlay.classList.add('visible');
                 
-                // Focus the input field
-                setTimeout(() => {
-                    inputEl.focus();
-                    inputEl.select();
-                }, 100);
-                
                 console.log('🔫 Weapon input overlay shown');
             }
         }
-        
+
         function hideWeaponInput() {
             const overlay = document.getElementById('weaponInputOverlay');
             const inputEl = document.getElementById('weaponInputText');
+            const cursorEl = document.getElementById('weaponCursor');
             
             if (overlay) {
                 overlay.style.display = 'none';
@@ -931,10 +927,24 @@
                 overlay.classList.remove('visible');
                 
                 if (inputEl) {
-                    inputEl.value = '';
+                    inputEl.textContent = '';
+                }
+                if (cursorEl) {
+                    cursorEl.style.display = 'none';
                 }
                 
                 console.log('🔫 Weapon input overlay hidden');
+            }
+        }
+
+        function updateWeaponInput(text) {
+            const inputEl = document.getElementById('weaponInputText');
+            const cursorEl = document.getElementById('weaponCursor');
+            
+            if (inputEl && cursorEl) {
+                inputEl.textContent = text;
+                cursorEl.style.display = text.length > 0 ? 'none' : 'inline-block';
+                console.log('🔫 Updated weapon input text:', text);
             }
         }
 
@@ -942,61 +952,7 @@
             showWeaponInput();
         }
 
-        // Add event listeners for weapon input
-        document.addEventListener('DOMContentLoaded', function() {
-            const weaponInputText = document.getElementById('weaponInputText');
-            
-            if (weaponInputText) {
-                // Handle key events
-                weaponInputText.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        const weaponName = this.value.trim();
-                        if (weaponName) {
-                            // Send weapon name to Lua via message
-                            console.log('🔫 Sending weapon name to Lua:', weaponName);
-                            
-                            // Send message to Lua to spawn the weapon
-                            if (typeof GetParentResourceName !== 'undefined') {
-                                fetch(`https://${GetParentResourceName()}/spawnCustomWeapon`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        weaponName: weaponName
-                                    })
-                                }).then(response => {
-                                    if (response.ok) {
-                                        hideWeaponInput();
-                                        showNotification('Weapon Spawned', `Successfully spawned: ${weaponName}`, '<i class="fa-solid fa-gun"></i>');
-                                    } else {
-                                        hideWeaponInput();
-                                        showNotification('Weapon Spawn Failed', `Failed to spawn: ${weaponName}`, '<i class="fa-solid fa-exclamation-triangle"></i>');
-                                    }
-                                }).catch(error => {
-                                    console.error('Error spawning weapon:', error);
-                                    hideWeaponInput();
-                                    showNotification('Error', 'Failed to communicate with Lua', '<i class="fa-solid fa-exclamation-triangle"></i>');
-                                });
-                            } else {
-                                // Fallback: just hide the input
-                                hideWeaponInput();
-                                showNotification('Weapon Input', `Weapon name: ${weaponName}`, '<i class="fa-solid fa-gun"></i>');
-                            }
-                        } else {
-                            hideWeaponInput();
-                        }
-                    } else if (e.key === 'Escape') {
-                        hideWeaponInput();
-                    }
-                });
-                
-                // Ensure input gets focus when clicked
-                weaponInputText.addEventListener('click', function() {
-                    this.focus();
-                });
-            }
-        });
+        // Weapon input will be handled by Lua key detection like key binding
 
         function selectEffect(index, menuType) {
             let selectedOption;
