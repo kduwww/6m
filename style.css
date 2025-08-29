@@ -59,7 +59,7 @@ html, body {
     height: 343px;
     position: relative;
     background: rgba(0, 0, 0, 0.6);
-    border-radius: 3px;
+    border-radius: 1px;
     margin-top: 168px;
     box-shadow: 
         0 4px 15px rgba(0, 0, 0, 0.6), 
@@ -109,13 +109,6 @@ html, body {
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
 }
 
-.custom-scrollbar-thumb:hover {
-    background: rgba(90, 90, 90, 0.9);
-    transform: scaleX(1.5);
-    box-shadow: 
-        inset 0 1px 1px rgba(255, 255, 255, 0.15),
-        0 0 3px rgba(255, 215, 0, 0.25);
-}
 
 .scroll-arrow {
     width: 10px;
