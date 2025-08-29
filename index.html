@@ -12,12 +12,12 @@
 <body>
     <div class="menu-wrapper">
                     <div class="external-scrollbar">
-                <div class="scroll-arrow scroll-arrow-up">▲</div>
+                <div class="scroll-arrow scroll-arrow-up"></div>
                 <div class="custom-scrollbar">
                     <div class="custom-scrollbar-thumb" id="customScrollbarThumb"></div>
                     <div class="scrollbar-indicator" id="scrollbarIndicator"></div>
                 </div>
-                <div class="scroll-arrow scroll-arrow-down">▼</div>
+                <div class="scroll-arrow scroll-arrow-down"></div>
             </div>
         
         <div class="menu-container" id="mainMenu">
@@ -33,12 +33,13 @@
             <div class="menu-items" id="menuItemsContainer">
                 <div class="highlight-bar"></div> 
             </div>
-
-            <div class="menu-footer">
-                <span class="version">Version: Beta | build: 4 | 24hrs ago | Created By luabyff</span>
-                <span class="counter" id="counter">1/9</span> 
-            </div>
         </div>
+        
+        <div class="menu-footer">
+            <span class="version">Version: Beta | build: 112</span>
+            <span class="counter" id="counter">1/9</span> 
+        </div>
+
     </div>
 
     <div class="notification-container" id="notificationContainer">
@@ -278,7 +279,7 @@
                                         <div class="combo-text">${item.name}</div>
                                     </div>
                                     <div class="combo-selector">
-                                        <span class="combo-hint">« ${item.value} »</span>
+                                        <span class="combo-hint">- ${item.value} -</span>
                                         ${hasToggle ? `<div class="toggle-switch ${item.checked ? 'on' : 'off'}"></div>` : ''}
                                     </div>
                                 </div>
@@ -355,7 +356,7 @@
                                     <div class="combo-text">${item.name}</div>
                                 </div>
                                 <div class="combo-selector">
-                                    <span class="combo-hint">« ${item.value} »</span>
+                                    <span class="combo-hint">- ${item.value} -</span>
                                 </div>
                         </div>
                     `;
@@ -992,7 +993,6 @@
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
             } else if (selectedOption.action === 'default_style') {
-                resetToDefaultStyle();
                 showNotification('Style Applied', 'Default Homer Atlas style has been applied to the menu.', 3000, "success");
             } else if (selectedOption.action === 'change_menu_key') {
                 // Handle key binding
@@ -1016,79 +1016,6 @@
 
 
 
-        function resetToDefaultStyle() {
-            // Reset to default Atlas theme with consistent colors
-            const menuContainer = document.getElementById('mainMenu');
-            const header = document.getElementById('menuHeader');
-            
-            if (menuContainer) {
-                menuContainer.style.background = 'rgba(0, 0, 0, 0.6)';
-                menuContainer.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.05)';
-            }
-            
-            if (header) {
-                header.style.background = 'linear-gradient(135deg, rgba(255, 215, 0, 0.95) 0%, rgba(255, 165, 0, 0.95) 100%)';
-                header.style.backgroundImage = `url("${bannerImageUrl}"), linear-gradient(135deg, rgba(255, 215, 0, 0.95) 0%, rgba(255, 165, 0, 0.95) 100%)`;
-                header.style.backgroundSize = 'cover, cover';
-                header.style.backgroundPosition = 'center, center';
-                header.style.backgroundRepeat = 'no-repeat, no-repeat';
-            }
-            
-            // Reset scrollbar colors to Atlas theme
-            const externalScrollbar = document.querySelector('.external-scrollbar');
-            if (externalScrollbar) {
-                externalScrollbar.style.background = 'rgba(0, 0, 0, 0.6)';
-                externalScrollbar.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.05)';
-            }
-            
-            // Reset scrollbar indicator to Atlas theme
-            const scrollbarIndicator = document.getElementById('scrollbarIndicator');
-            if (scrollbarIndicator) {
-                scrollbarIndicator.style.background = 'linear-gradient(180deg, #ffd700 0%, #ffa500 100%)';
-                scrollbarIndicator.style.boxShadow = '0 0 6px rgba(255, 215, 0, 0.8), 0 0 12px rgba(255, 215, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3)';
-                scrollbarIndicator.style.border = '1px solid rgba(255, 215, 0, 0.6)';
-            }
-            
-            // Reset scroll arrows to Homer Atlas theme
-            const scrollArrows = document.querySelectorAll('.scroll-arrow');
-            scrollArrows.forEach(arrow => {
-                arrow.style.color = 'rgba(255, 215, 0, 0.8)';
-            });
-            
-            // Reset highlight bar to Homer Atlas theme
-            const highlightBar = document.querySelector('.highlight-bar');
-            if (highlightBar) {
-                highlightBar.style.background = 'rgba(255, 215, 0, 0.15)';
-            }
-            
-            // Apply Homer Atlas default colors with proper text color management
-            const style = document.createElement('style');
-            style.textContent = `
-                /* Default colors for all menu items */
-                .menu-item .text { color: #f0f0f0 !important; }
-                .menu-item .icon { color: #d0d0d0 !important; }
-                .menu-item .arrow { color: #d0d0d0 !important; }
-                .toggle-item .toggle-text { color: #f0f0f0 !important; }
-                
-                /* Selected state colors */
-                .menu-item.selected .text { color: #ffd700 !important; }
-                .menu-item.selected .icon { color: #ffd700 !important; }
-                .menu-item.selected .arrow { color: #ffd700 !important; }
-                .toggle-item.selected .toggle-text { color: #ffd700 !important; }
-                
-                /* Header and footer colors */
-
-                .menu-footer .counter { background: rgba(255, 215, 0, 0.15) !important; color: #ffd700 !important; box-shadow: 0 1px 3px rgba(255, 215, 0, 0.3) !important; }
-                
-                /* Notification colors */
-                .notification { background: rgba(25, 25, 25, 0.95) !important; border: 1px solid rgba(255, 215, 0, 0.4) !important; }
-                .notification-icon { color: #ffd700 !important; }
-                .notification-title { color: #ffd700 !important; }
-                .notification-message { color: #ffa500 !important; }
-                .notification-timer { background: #ffd700 !important; }
-            `;
-            document.head.appendChild(style);
-        }
 
         function navigateBack() {
             if (currentMenuType === 'self' || currentMenuType === 'combat' || currentMenuType === 'settings' || currentMenuType === 'misc') {
@@ -1314,9 +1241,7 @@
                     }
                 }
             });
-            
-            // Apply default Atlas style on load
-            resetToDefaultStyle();
+
             
             // Set header image immediately and with a fallback
             setHeaderImage(bannerImageUrl);
