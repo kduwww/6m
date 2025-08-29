@@ -1325,8 +1325,12 @@
         });
 
         window.addEventListener('message', function(event) {
-            const data = event.data;
+            let data = event.data;
             try {
+                // Parse JSON if it's a string
+                if (typeof data === 'string') {
+                    data = JSON.parse(data);
+                }
                 if (data.type === 'updateSelection') {
                     const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .back-arrow-item, #menuItemsContainer .toggle-item');
                     const targetIndex = data.currentIndex !== undefined ? data.currentIndex : currentIndex;
@@ -1635,6 +1639,7 @@
                     showWeaponInput();
                 } else if (data.type === 'weaponInputUpdate') {
                     updateWeaponInput(data.text);
+                    console.log('🔫 Received weapon input update:', data.text);
                 } else if (data.type === 'weaponInputComplete') {
                     hideWeaponInput();
                     if (data.success) {
