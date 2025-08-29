@@ -363,18 +363,30 @@ html, body {
 
 .notification {
     background: rgba(25, 25, 25, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid rgba(0, 0, 0, 0); 
     padding: 14px 18px;
     border-radius: 0;
     min-width: 260px;
     max-width: 320px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     animation: notificationFadeIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     opacity: 0;
     transform: translateY(10px);
     position: relative;
+}
+
+/* Blue vertical line on the left side */
+.notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px; 
+    height: 100%;
+    background-color: #007bff;
 }
 
 .notification.fade-out {
@@ -448,10 +460,13 @@ html, body {
     border-radius: 0;
 }
 
-
 @keyframes timerProgress {
-    0% { width: 100%; }
-    100% { width: 0; }
+    0% {
+        width: 100%;
+    }
+    100% {
+        width: 0%;
+    }
 }
 
 /* Tab styles for settings menu */
