@@ -363,7 +363,11 @@ html, body {
 
 .notification {
     background: rgba(25, 25, 25, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0); 
+    /* This is the new blue border on the left side */
+    border-left: 4px solid #007bff;
+    border-top: 1px solid rgba(0, 0, 0, 0); 
+    border-right: 1px solid rgba(0, 0, 0, 0);
+    border-bottom: 1px solid rgba(0, 0, 0, 0); 
     padding: 14px 18px;
     border-radius: 0;
     min-width: 260px;
@@ -376,17 +380,6 @@ html, body {
     opacity: 0;
     transform: translateY(10px);
     position: relative;
-}
-
-/* Blue vertical line on the left side */
-.notification::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px; 
-    height: 100%;
-    background-color: #007bff;
 }
 
 .notification.fade-out {
