@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 138</span>
+            <span class="version">Version: Beta | build: 120</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -434,34 +434,32 @@
                     
                     // Check if this is a player item with toggle switch
                     if (this.classList.contains('player-item')) {
-                        const toggleSwitch = this.querySelector('.toggle-switch');
-                        if (toggleSwitch) {
-                            // Toggle the switch state
-                            const isCurrentlyOn = toggleSwitch.classList.contains('on');
-                            toggleSwitch.classList.toggle('on', !isCurrentlyOn);
-                            toggleSwitch.classList.toggle('off', isCurrentlyOn);
-                            
-                            // Update the player data
-                            if (menuData[currentMenuType].isTabbed) {
-                                const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
-                                if (currentTab.items[index]) {
-                                    currentTab.items[index].checked = !isCurrentlyOn;
+                        // Make player items work like toggle items - use the same logic as God Mode
+                        if (menuData[currentMenuType].isTabbed) {
+                            const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
+                            if (currentTab.items[index]) {
+                                const itemData = currentTab.items[index];
+                                itemData.checked = !itemData.checked;
+                                
+                                const toggleSwitch = this.querySelector('.toggle-switch');
+                                if (toggleSwitch) {
+                                    toggleSwitch.classList.toggle('on', itemData.checked);
+                                    toggleSwitch.classList.toggle('off', !itemData.checked);
                                 }
+                                
+                                // Show notification
+                                const playerName = this.querySelector('.player-name').textContent;
+                                const playerId = this.querySelector('.player-id').textContent;
+                                showNotification(
+                                    `Player ${itemData.checked ? 'Selected' : 'Deselected'}`,
+                                    `${playerName} (ID: ${playerId})`,
+                                    '<i class="fa-solid fa-user"></i>'
+                                );
                             }
-                            
-                            // Show notification
-                            const playerName = this.querySelector('.player-name').textContent;
-                            const playerId = this.querySelector('.player-id').textContent;
-                            showNotification(
-                                `Player ${!isCurrentlyOn ? 'Selected' : 'Deselected'}`,
-                                `${playerName} (ID: ${playerId})`,
-                                '<i class="fa-solid fa-user"></i>'
-                            );
-
-                            // IMPORTANT: Update selection state and stop further execution
-                            updateSelection(index, currentMenuType);
-                            return;
                         }
+                        
+                        updateSelection(index, currentMenuType);
+                        return; // Don't proceed with normal item handling
                     }
                     
                     // Get item data based on menu structure
@@ -1384,24 +1382,14 @@
                     }
                 } else if (data.type === 'enter') {
                     let selectedItemData;
-                    let isPlayerItem = false;
-
                     if (menuData[currentMenuType].isTabbed) {
                         const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
                         selectedItemData = currentTab.items[currentIndex];
-                        if (currentTab.isPlayerList) {
-                            isPlayerItem = true;
-                        }
                     } else {
                         selectedItemData = menuData[currentMenuType].items[currentIndex];
                     }
                     
-                    if (isPlayerItem) {
-                        const domElement = document.querySelector(`.player-item[data-index="${currentIndex}"]`);
-                        if (domElement) {
-                            domElement.click();
-                        }
-                    } else if (selectedItemData && selectedItemData.type === 'toggle') {
+                    if (selectedItemData && selectedItemData.type === 'toggle') {
                         const domElement = document.querySelector(`[data-index="${currentIndex}"][data-action="${selectedItemData.action}"]`);
                         if (domElement) {
                             domElement.click(); 
