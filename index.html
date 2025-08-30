@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 136</span>
+            <span class="version">Version: Beta | build: 138</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -457,8 +457,10 @@
                                 `${playerName} (ID: ${playerId})`,
                                 '<i class="fa-solid fa-user"></i>'
                             );
-                            
-                            return; // Don't proceed with normal item handling
+
+                            // IMPORTANT: Update selection state and stop further execution
+                            updateSelection(index, currentMenuType);
+                            return;
                         }
                     }
                     
