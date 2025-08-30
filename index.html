@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 143</span>
+            <span class="version">Version: Beta | build: 145</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -1728,7 +1728,7 @@
                         // Update the online menu data with player list
                         if (menuData.online && menuData.online.tabs && menuData.online.tabs.list) {
                             menuData.online.tabs.list.items = data.players;
-                            // Re-render the menu to show updated player list
+                            // Re-render the menu to show updated player list with toggle states
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                             updateScrollbarIndicator();
