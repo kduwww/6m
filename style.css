@@ -1109,3 +1109,55 @@ html, body {
     white-space: nowrap;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
+
+/* Player list styles */
+.player-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+    min-height: 45px;
+    transition: none;
+    z-index: 2;
+}
+
+.player-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.player-id {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b8dc4;
+    background: rgba(75, 141, 196, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(75, 141, 196, 0.3);
+    min-width: 30px;
+    text-align: center;
+}
+
+.player-name {
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #f0f0f0;
+    flex: 1;
+}
+
+.player-item.selected .player-id {
+    background: rgba(75, 141, 196, 0.2);
+    border-color: rgba(75, 141, 196, 0.6);
+    color: #ffffff;
+}
+
+.player-item.selected .player-name {
+    color: #c2d5ff;
+}
