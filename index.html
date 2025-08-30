@@ -149,6 +149,29 @@
                     }
                 }
             },
+            online: {
+                title: 'HOME > ONLINE',
+                isTabbed: true,
+                currentTab: 'list',
+                tabs: {
+                    list: {
+                        title: 'List',
+                        items: []
+                    },
+                    safe: {
+                        title: 'Safe',
+                        items: []
+                    },
+                    risky: {
+                        title: 'Risky',
+                        items: []
+                    },
+                    vehicle: {
+                        title: 'Vehicle',
+                        items: []
+                    }
+                }
+            },
             combat: {
                 title: 'Combat/Weapons',
                 isTabbed: true,
@@ -677,6 +700,11 @@
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
+            } else if (currentMenuType === 'online' && menuData.online.tabs[tabKey]) {
+                menuData.online.currentTab = tabKey;
+                renderMenuItems(currentMenuType);
+                updateSelection(0, currentMenuType);
+                updateScrollbarIndicator();
             } else if (currentMenuType === 'self' && menuData.self.tabs[tabKey]) {
                 menuData.self.currentTab = tabKey;
                 renderMenuItems(currentMenuType);
@@ -977,6 +1005,11 @@
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
+            } else if (menuType === 'main' && selectedOption.action === 'online') {
+                currentMenuType = 'online';
+                renderMenuItems(currentMenuType);
+                updateSelection(0, currentMenuType);
+                updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'misc') {
                 currentMenuType = 'misc';
                 renderMenuItems(currentMenuType);
@@ -1018,7 +1051,7 @@
 
 
         function navigateBack() {
-            if (currentMenuType === 'self' || currentMenuType === 'combat' || currentMenuType === 'settings' || currentMenuType === 'misc') {
+            if (currentMenuType === 'self' || currentMenuType === 'online' || currentMenuType === 'combat' || currentMenuType === 'settings' || currentMenuType === 'misc') {
                 const previousMenu = currentMenuType;
                 currentMenuType = 'main';
                 renderMenuItems(currentMenuType);
@@ -1334,7 +1367,7 @@
                         showNotification('Teleport Failed', 'No waypoint set on map!', '<i class="fa-solid fa-exclamation-triangle"></i>');
                     }
                 } else if (data.type === 'switchTab') {
-                    if ((currentMenuType === 'settings' || currentMenuType === 'self' || currentMenuType === 'combat') && data.tab) {
+                    if ((currentMenuType === 'settings' || currentMenuType === 'online' || currentMenuType === 'self' || currentMenuType === 'combat') && data.tab) {
                         switchTab(data.tab);
                     }
                 } else if (data.type === 'enter') {
