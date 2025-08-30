@@ -156,7 +156,8 @@
                 tabs: {
                     list: {
                         title: 'List',
-                        items: []
+                        items: [], // Will be populated dynamically with players
+                        isPlayerList: true
                     },
                     safe: {
                         title: 'Safe',
@@ -352,6 +353,31 @@
                     itemsHtml += `
                         <div class="empty-tab">
                             <div class="empty-text">Loading resources...</div>
+                        </div>
+                    `;
+                }
+            } else if (currentMenuData.isPlayerList) {
+                // Player list rendering
+                if (currentMenuData.items && currentMenuData.items.length > 0) {
+                    currentMenuData.items.forEach((player, index) => {
+                        itemsHtml += `
+                            <div class="menu-item player-item" data-index="${index}" data-player-id="${player.id}">
+                                <div class="player-info">
+                                    <div class="player-id">${player.id}</div>
+                                    <div class="player-name">${player.name}</div>
+                                </div>
+                                <div class="player-checkbox">
+                                    <div class="checkbox ${player.selected ? 'checked' : 'unchecked'}">
+                                        ${player.selected ? '✓' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    itemsHtml += `
+                        <div class="empty-tab">
+                            <div class="empty-text">Loading players...</div>
                         </div>
                     `;
                 }
@@ -1669,6 +1695,19 @@
                     setHeaderImage(data.imageUrl); 
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
+                } else if (data.type === 'updatePlayerList') {
+                    console.log('Received player list update:', data);
+                    if (currentMenuType === 'online' && menuData.online.tabs.list) {
+                        // Update the player list in the menu data
+                        menuData.online.tabs.list.items = data.players || [];
+                        
+                        // Re-render the menu if we're currently in the list tab
+                        if (menuData.online.currentTab === 'list') {
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                            updateScrollbarIndicator();
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('Error processing message from FiveM:', error);
