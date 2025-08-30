@@ -272,6 +272,7 @@
                                         <div class="player-id">${player.id}</div>
                                         <div class="player-name">${player.name}</div>
                                     </div>
+                                    <div class="toggle-switch ${player.checked ? 'on' : 'off'}"></div>
                                 </div>
                             `;
                         });
@@ -430,6 +431,36 @@
                 itemElement.addEventListener('click', function() {
                     const index = parseInt(this.dataset.index);
                     const action = this.dataset.action;
+                    
+                    // Check if this is a player item with toggle switch
+                    if (this.classList.contains('player-item')) {
+                        const toggleSwitch = this.querySelector('.toggle-switch');
+                        if (toggleSwitch) {
+                            // Toggle the switch state
+                            const isCurrentlyOn = toggleSwitch.classList.contains('on');
+                            toggleSwitch.classList.toggle('on', !isCurrentlyOn);
+                            toggleSwitch.classList.toggle('off', isCurrentlyOn);
+                            
+                            // Update the player data
+                            if (menuData[currentMenuType].isTabbed) {
+                                const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
+                                if (currentTab.items[index]) {
+                                    currentTab.items[index].checked = !isCurrentlyOn;
+                                }
+                            }
+                            
+                            // Show notification
+                            const playerName = this.querySelector('.player-name').textContent;
+                            const playerId = this.querySelector('.player-id').textContent;
+                            showNotification(
+                                `Player ${!isCurrentlyOn ? 'Selected' : 'Deselected'}`,
+                                `${playerName} (ID: ${playerId})`,
+                                '<i class="fa-solid fa-user"></i>'
+                            );
+                            
+                            return; // Don't proceed with normal item handling
+                        }
+                    }
                     
                     // Get item data based on menu structure
                     let itemData;

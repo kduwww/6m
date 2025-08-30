@@ -1173,3 +1173,55 @@ html, body {
 .menu-item.player-item .arrow {
     display: none !important;
 }
+
+/* Toggle switch for player items */
+.menu-item.player-item .toggle-switch {
+    position: relative !important;
+    width: 40px !important;
+    height: 20px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    flex-shrink: 0 !important;
+    margin-left: 12px !important;
+}
+
+.menu-item.player-item .toggle-switch::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 2px !important;
+    left: 2px !important;
+    width: 12px !important;
+    height: 12px !important;
+    background: #ffffff !important;
+    border-radius: 50% !important;
+    transition: all 0.2s ease !important;
+}
+
+.menu-item.player-item .toggle-switch.on {
+    background: rgba(75, 141, 196, 0.8) !important;
+    border-color: rgba(75, 141, 196, 0.6) !important;
+}
+
+.menu-item.player-item .toggle-switch.on::before {
+    transform: translateX(20px) !important;
+}
+
+.menu-item.player-item .toggle-switch.off {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.menu-item.player-item .toggle-switch.off::before {
+    transform: translateX(0) !important;
+}
+
+.menu-item.player-item:hover .toggle-switch {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.menu-item.player-item.selected .toggle-switch {
+    border-color: rgba(255, 255, 255, 0.6) !important;
+}
