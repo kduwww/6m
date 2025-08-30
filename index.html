@@ -262,7 +262,27 @@
                 
                 // Render items for current tab
                 const currentTab = currentMenuData.tabs[currentMenuData.currentTab];
-                if (currentTab.items && currentTab.items.length > 0) {
+
+                if (currentTab.isPlayerList) {
+                    if (currentTab.items && currentTab.items.length > 0) {
+                        currentTab.items.forEach((player, index) => {
+                            itemsHtml += `
+                                <div class="menu-item player-item" data-index="${index}" data-player-id="${player.id}">
+                                    <div class="player-info">
+                                        <div class="player-id">${player.id}</div>
+                                        <div class="player-name">${player.name}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        itemsHtml += `
+                            <div class="empty-tab">
+                                <div class="empty-text">Loading players...</div>
+                            </div>
+                        `;
+                    }
+                } else if (currentTab.items && currentTab.items.length > 0) {
                     currentTab.items.forEach((item, index) => {
                         if (item.type === 'toggle') {
                             itemsHtml += `
@@ -349,27 +369,6 @@
                     itemsHtml += `
                         <div class="empty-tab">
                             <div class="empty-text">Loading resources...</div>
-                        </div>
-                    `;
-                }
-            } else if (currentMenuData.isTabbed && currentMenuData.tabs && currentMenuData.tabs.list && currentMenuData.tabs.list.isPlayerList) {
-                // Player list rendering for Online > List tab
-                const currentTab = currentMenuData.tabs[currentMenuData.currentTab];
-                if (currentTab && currentTab.items && currentTab.items.length > 0) {
-                    currentTab.items.forEach((player, index) => {
-                        itemsHtml += `
-                            <div class="menu-item player-item" data-index="${index}" data-player-id="${player.id}">
-                                <div class="player-info">
-                                    <div class="player-id">${player.id}</div>
-                                    <div class="player-name">${player.name}</div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    itemsHtml += `
-                        <div class="empty-tab">
-                            <div class="empty-text">Loading players...</div>
                         </div>
                     `;
                 }
