@@ -1127,6 +1127,7 @@ html, body {
 .player-info {
     flex: 1;
     display: flex;
+    flex-direction: row; /* Explicitly set direction to row */
     align-items: center;
     gap: 15px;
 }
