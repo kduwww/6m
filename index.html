@@ -267,7 +267,7 @@
                     if (currentTab.items && currentTab.items.length > 0) {
                         currentTab.items.forEach((player, index) => {
                             itemsHtml += `
-                                <div class="toggle-item player-item" data-index="${index}" data-action="toggle_player" data-player-id="${player.id}">
+                                <div class="toggle-item player-item" data-index="${index}" data-player-id="${player.id}">
                                     <div class="player-info">
                                         <div class="player-id">${player.id}</div>
                                         <div class="player-name">${player.name}</div>
@@ -432,8 +432,6 @@
                     const index = parseInt(this.dataset.index);
                     const action = this.dataset.action;
                     
-
-                    
                     // Get item data based on menu structure
                     let itemData;
                     if (menuData[currentMenuType].isTabbed) {
@@ -444,67 +442,32 @@
                     }
 
                     if (itemElement.classList.contains('toggle-item')) {
-                        // Handle player toggle differently - use player data structure
-                        if (action === 'toggle_player' && itemElement.classList.contains('player-item')) {
-                            const playerId = this.dataset.playerId;
-                            const playerName = this.querySelector('.player-name').textContent;
-                            
-                            // Find player in current tab data
-                            if (menuData[currentMenuType].isTabbed) {
-                                const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
-                                const playerItem = currentTab.items[index];
-                                if (playerItem) {
-                                    // Toggle the checked state
-                                    playerItem.checked = !playerItem.checked;
-                                    const toggleSwitch = itemElement.querySelector('.toggle-switch');
-                                    
-                                    if (playerItem.checked) {
-                                        // Player is now selected - turn ON toggle switch
-                                        toggleSwitch.classList.remove('off');
-                                        toggleSwitch.classList.add('on');
-                                    } else {
-                                        // Player is now deselected - turn OFF toggle switch
-                                        toggleSwitch.classList.remove('on');
-                                        toggleSwitch.classList.add('off');
-                                    }
-                                    
-                                    // Show notification
-                                    showNotification(
-                                        `Player ${playerItem.checked ? 'Selected' : 'Deselected'}`,
-                                        `${playerName} (ID: ${playerId})`,
-                                        '<i class="fa-solid fa-user"></i>'
-                                    );
-                                }
-                            }
-                        } else {
-                            // Handle regular toggle items
-                            itemData.checked = !itemData.checked;
-                            const toggleSwitch = itemElement.querySelector('.toggle-switch');
-                            toggleSwitch.classList.toggle('on', itemData.checked);
-                            toggleSwitch.classList.toggle('off', !itemData.checked);
+                        itemData.checked = !itemData.checked;
+                        const toggleSwitch = itemElement.querySelector('.toggle-switch');
+                        toggleSwitch.classList.toggle('on', itemData.checked);
+                        toggleSwitch.classList.toggle('off', !itemData.checked);
 
-                            // Handle different toggle actions
-                            if (itemData.action === 'noclip_toggle') {
+                        // Handle different toggle actions
+                        if (itemData.action === 'noclip_toggle') {
+                        showNotification(
+                            itemData.checked ? 'Noclip Activated' : 'Noclip Deactivated',
+                            itemData.checked ? 'Noclip mode enabled.' : 'Noclip mode disabled.',
+                            itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
+                        );
+                        } else if (itemData.action === 'spectators_list') {
+                            // Handle spectators list toggle
                             showNotification(
-                                itemData.checked ? 'Noclip Activated' : 'Noclip Deactivated',
-                                itemData.checked ? 'Noclip mode enabled.' : 'Noclip mode disabled.',
+                                itemData.checked ? 'Spectators List Activated' : 'Spectators List Deactivated',
+                                itemData.checked ? 'Spectators list players...' : 'Spectators list stopped.',
+                                itemData.checked ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'
+                            );
+                        } else if (itemData.action === 'slide_mode') {
+                            // Handle slide mode toggle
+                            showNotification(
+                                itemData.checked ? 'Slide Mode Activated' : 'Slide Mode Deactivated',
+                                itemData.checked ? 'Enhanced movement sliding enabled!' : 'Enhanced movement sliding disabled.',
                                 itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
                             );
-                            } else if (itemData.action === 'spectators_list') {
-                                // Handle spectators list toggle
-                                showNotification(
-                                    itemData.checked ? 'Spectators List Activated' : 'Spectators List Deactivated',
-                                    itemData.checked ? 'Spectators list players...' : 'Spectators list stopped.',
-                                    itemData.checked ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'
-                                );
-                            } else if (itemData.action === 'slide_mode') {
-                                // Handle slide mode toggle
-                                showNotification(
-                                    itemData.checked ? 'Slide Mode Activated' : 'Slide Mode Deactivated',
-                                    itemData.checked ? 'Enhanced movement sliding enabled!' : 'Enhanced movement sliding disabled.',
-                                    itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
-                                );
-                            }
                         }
 
                         updateSelection(index, currentMenuType);
@@ -713,24 +676,6 @@
 
             if (totalItems > 0 && index >= 0 && index < totalItems) {
                 currentItems[index].classList.add('selected');
-                
-                // Special handling for player items: update toggle switch state when selected
-                if (currentItems[index].classList.contains('player-item') && currentItems[index].classList.contains('toggle-item')) {
-                    const toggleSwitch = currentItems[index].querySelector('.toggle-switch');
-                    if (toggleSwitch) {
-                        // Turn ON the toggle switch for the selected player
-                        toggleSwitch.classList.remove('off');
-                        toggleSwitch.classList.add('on');
-                        
-                        // Update the data structure
-                        if (menuData[currentMenuType].isTabbed) {
-                            const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
-                            if (currentTab.items[index]) {
-                                currentTab.items[index].checked = true;
-                            }
-                        }
-                    }
-                }
                 
                 // Scroll to selected item if needed
                 const selectedElement = currentItems[index];
