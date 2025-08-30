@@ -1110,54 +1110,66 @@ html, body {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
-/* Player list styles */
-.player-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    margin: 0;
-    cursor: pointer;
-    position: relative;
-    min-height: 45px;
-    transition: none;
-    z-index: 2;
+/* Player list styles - Override general menu-item styles */
+.menu-item.player-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 8px 12px !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    position: relative !important;
+    min-height: 45px !important;
+    transition: none !important;
+    z-index: 2 !important;
 }
 
-.player-info {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.menu-item.player-item .player-info {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    width: 100% !important;
 }
 
-.player-id {
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: #4b8dc4;
-    background: rgba(75, 141, 196, 0.1);
-    padding: 4px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(75, 141, 196, 0.3);
-    min-width: 30px;
-    text-align: center;
+.menu-item.player-item .player-id {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #4b8dc4 !important;
+    background: rgba(75, 141, 196, 0.1) !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(75, 141, 196, 0.3) !important;
+    min-width: 30px !important;
+    text-align: center !important;
+    flex-shrink: 0 !important;
 }
 
-.player-name {
-    font-family: 'Roboto', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: #f0f0f0;
-    flex: 1;
+.menu-item.player-item .player-name {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #f0f0f0 !important;
+    flex: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
-.player-item.selected .player-id {
-    background: rgba(75, 141, 196, 0.2);
-    border-color: rgba(75, 141, 196, 0.6);
-    color: #ffffff;
+.menu-item.player-item.selected .player-id {
+    background: rgba(75, 141, 196, 0.2) !important;
+    border-color: rgba(75, 141, 196, 0.6) !important;
+    color: #ffffff !important;
 }
 
-.player-item.selected .player-name {
-    color: #c2d5ff;
+.menu-item.player-item.selected .player-name {
+    color: #c2d5ff !important;
+}
+
+/* Hide any conflicting elements from general menu-item */
+.menu-item.player-item .icon,
+.menu-item.player-item .text,
+.menu-item.player-item .arrow {
+    display: none !important;
 }

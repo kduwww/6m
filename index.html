@@ -266,11 +266,12 @@
                 if (currentTab.isPlayerList) {
                     if (currentTab.items && currentTab.items.length > 0) {
                         currentTab.items.forEach((player, index) => {
-                            const isChecked = player.checked || false;
                             itemsHtml += `
-                                <div class="toggle-item player-item" data-index="${index}" data-player-id="${player.id}">
-                                    <div class="toggle-text player-name">${player.name}</div>
-                                    <div class="toggle-switch ${isChecked ? 'on' : 'off'}"></div>
+                                <div class="menu-item player-item" data-index="${index}" data-player-id="${player.id}">
+                                    <div class="player-info">
+                                        <div class="player-id">${player.id}</div>
+                                        <div class="player-name">${player.name}</div>
+                                    </div>
                                 </div>
                             `;
                         });
