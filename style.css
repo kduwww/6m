@@ -1167,15 +1167,16 @@ html, body {
     color: #c2d5ff !important;
 }
 
-/* Hide any conflicting elements from general menu-item */
+/* Hide any conflicting elements from general menu-item and toggle-item */
 .menu-item.player-item .icon,
 .menu-item.player-item .text,
-.menu-item.player-item .arrow {
+.menu-item.player-item .arrow,
+.toggle-item.player-item .toggle-text {
     display: none !important;
 }
 
 /* Player item toggle switch positioning */
-.menu-item.player-item .toggle-switch {
+.toggle-item.player-item .toggle-switch {
     flex-shrink: 0 !important;
     margin-left: 12px !important;
 }
