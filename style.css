@@ -1110,11 +1110,12 @@ html, body {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
-/* Player list styles - Override general menu-item styles */
-.menu-item.player-item {
+/* Player list styles - Override general menu-item and toggle-item styles */
+.menu-item.player-item,
+.toggle-item.player-item {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
+    justify-content: space-between !important;
     padding: 8px 12px !important;
     margin: 0 !important;
     cursor: pointer !important;
@@ -1124,7 +1125,8 @@ html, body {
     z-index: 2 !important;
 }
 
-.menu-item.player-item .player-info {
+.menu-item.player-item .player-info,
+.toggle-item.player-item .player-info {
     flex: 1 !important;
     display: flex !important;
     align-items: center !important;
@@ -1132,7 +1134,8 @@ html, body {
     width: 100% !important;
 }
 
-.menu-item.player-item .player-id {
+.menu-item.player-item .player-id,
+.toggle-item.player-item .player-id {
     font-family: 'Roboto', sans-serif !important;
     font-size: 12px !important;
     font-weight: 600 !important;
@@ -1146,7 +1149,8 @@ html, body {
     flex-shrink: 0 !important;
 }
 
-.menu-item.player-item .player-name {
+.menu-item.player-item .player-name,
+.toggle-item.player-item .player-name {
     font-family: 'Roboto', sans-serif !important;
     font-size: 13px !important;
     font-weight: 500 !important;
@@ -1157,13 +1161,15 @@ html, body {
     text-overflow: ellipsis !important;
 }
 
-.menu-item.player-item.selected .player-id {
+.menu-item.player-item.selected .player-id,
+.toggle-item.player-item.selected .player-id {
     background: rgba(75, 141, 196, 0.2) !important;
     border-color: rgba(75, 141, 196, 0.6) !important;
     color: #ffffff !important;
 }
 
-.menu-item.player-item.selected .player-name {
+.menu-item.player-item.selected .player-name,
+.toggle-item.player-item.selected .player-name {
     color: #c2d5ff !important;
 }
 

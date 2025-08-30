@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 120</span>
+            <span class="version">Version: Beta | build: 143</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -442,32 +442,59 @@
                     }
 
                     if (itemElement.classList.contains('toggle-item')) {
-                        itemData.checked = !itemData.checked;
-                        const toggleSwitch = itemElement.querySelector('.toggle-switch');
-                        toggleSwitch.classList.toggle('on', itemData.checked);
-                        toggleSwitch.classList.toggle('off', !itemData.checked);
-
-                        // Handle different toggle actions
-                        if (itemData.action === 'noclip_toggle') {
-                        showNotification(
-                            itemData.checked ? 'Noclip Activated' : 'Noclip Deactivated',
-                            itemData.checked ? 'Noclip mode enabled.' : 'Noclip mode disabled.',
-                            itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
-                        );
-                        } else if (itemData.action === 'spectators_list') {
-                            // Handle spectators list toggle
+                        // Handle player item toggles differently
+                        if (itemElement.classList.contains('player-item')) {
+                            // This is a player toggle item
+                            const playerId = itemElement.dataset.playerId;
+                            const playerName = itemElement.querySelector('.player-name').textContent;
+                            
+                            // Toggle the player's checked state
+                            if (itemData) {
+                                itemData.checked = !itemData.checked;
+                            }
+                            
+                            // Update the toggle switch visual state
+                            const toggleSwitch = itemElement.querySelector('.toggle-switch');
+                            if (toggleSwitch) {
+                                toggleSwitch.classList.toggle('on', itemData ? itemData.checked : false);
+                                toggleSwitch.classList.toggle('off', itemData ? !itemData.checked : true);
+                            }
+                            
+                            // Show notification for player toggle
                             showNotification(
-                                itemData.checked ? 'Spectators List Activated' : 'Spectators List Deactivated',
-                                itemData.checked ? 'Spectators list players...' : 'Spectators list stopped.',
-                                itemData.checked ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'
+                                itemData && itemData.checked ? 'Player Enabled' : 'Player Disabled',
+                                `${playerName} (ID: ${playerId}) has been ${itemData && itemData.checked ? 'enabled' : 'disabled'}`,
+                                itemData && itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
                             );
-                        } else if (itemData.action === 'slide_mode') {
-                            // Handle slide mode toggle
+                        } else {
+                            // Handle regular toggle items
+                            itemData.checked = !itemData.checked;
+                            const toggleSwitch = itemElement.querySelector('.toggle-switch');
+                            toggleSwitch.classList.toggle('on', itemData.checked);
+                            toggleSwitch.classList.toggle('off', !itemData.checked);
+
+                            // Handle different toggle actions
+                            if (itemData.action === 'noclip_toggle') {
                             showNotification(
-                                itemData.checked ? 'Slide Mode Activated' : 'Slide Mode Deactivated',
-                                itemData.checked ? 'Enhanced movement sliding enabled!' : 'Enhanced movement sliding disabled.',
+                                itemData.checked ? 'Noclip Activated' : 'Noclip Deactivated',
+                                itemData.checked ? 'Noclip mode enabled.' : 'Noclip mode disabled.',
                                 itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
                             );
+                            } else if (itemData.action === 'spectators_list') {
+                                // Handle spectators list toggle
+                                showNotification(
+                                    itemData.checked ? 'Spectators List Activated' : 'Spectators List Deactivated',
+                                    itemData.checked ? 'Spectators list players...' : 'Spectators list stopped.',
+                                    itemData.checked ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'
+                                );
+                            } else if (itemData.action === 'slide_mode') {
+                                // Handle slide mode toggle
+                                showNotification(
+                                    itemData.checked ? 'Slide Mode Activated' : 'Slide Mode Deactivated',
+                                    itemData.checked ? 'Enhanced movement sliding enabled!' : 'Enhanced movement sliding disabled.',
+                                    itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
+                                );
+                            }
                         }
 
                         updateSelection(index, currentMenuType);
