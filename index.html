@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 120</span>
+            <span class="version">Version: Beta | build: 135</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -738,6 +738,30 @@
             
             // Update tooltip for current selection
             updateTooltipForCurrentSelection();
+            
+            // Update toggle switch states for player items
+            if (menuType === 'online' && menuData.online && menuData.online.tabs && menuData.online.tabs.list) {
+                const currentTab = menuData.online.tabs[menuData.online.currentTab];
+                if (currentTab && currentTab.isPlayerList) {
+                    // Update all player toggle switches to show current selection
+                    currentItems.forEach((item, itemIndex) => {
+                        if (item.classList.contains('player-item')) {
+                            const toggleSwitch = item.querySelector('.toggle-switch');
+                            if (toggleSwitch) {
+                                // Set toggle to ON if this is the selected item, OFF otherwise
+                                const isSelected = itemIndex === index;
+                                toggleSwitch.classList.toggle('on', isSelected);
+                                toggleSwitch.classList.toggle('off', !isSelected);
+                                
+                                // Update the data model
+                                if (currentTab.items[itemIndex]) {
+                                    currentTab.items[itemIndex].checked = isSelected;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
             
             counterElement.textContent = `${(totalItems > 0 && index >= 0) ? index + 1 : 0}/${totalItems}`;
         }
