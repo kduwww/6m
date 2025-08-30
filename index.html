@@ -214,7 +214,27 @@
                 title: 'RESOURCES',
                 items: [], // Will be populated dynamically
                 isResourceMenu: true
-            }
+            },
+            online: {
+                title: 'HOME > ONLINE',
+                isTabbed: true,
+                currentTab: 'list',
+                tabs: {
+                    list: {
+                        title: 'List',
+                        items: [], // Will be populated dynamically with server players
+                        isPlayerList: true
+                    },
+                    safe: {
+                        title: 'Safe',
+                        items: [
+                            { name: "Anti-Cheat Status", action: "anti_cheat_status", icon: '<i class="fa-solid fa-shield-halved"></i>', desc: "Check anti-cheat status", tooltip: "View current anti-cheat system status and bypass information" },
+                            { name: "Server Info", action: "server_info", icon: '<i class="fa-solid fa-server"></i>', desc: "Server information", tooltip: "Display server information and statistics" },
+                            { name: "Connection Status", action: "connection_status", icon: '<i class="fa-solid fa-wifi"></i>', desc: "Network connection status", tooltip: "Check your connection status and ping to server" }
+                        ]
+                    }
+                }
+            },
         };
 
         function renderMenuItems(menuType) {
@@ -329,6 +349,27 @@
                     itemsHtml += `
                         <div class="empty-tab">
                             <div class="empty-text">Loading resources...</div>
+                        </div>
+                    `;
+                }
+            } else if (currentMenuData.isTabbed && currentMenuData.tabs && currentMenuData.tabs.list && currentMenuData.tabs.list.isPlayerList) {
+                // Player list rendering for Online > List tab
+                const currentTab = currentMenuData.tabs[currentMenuData.currentTab];
+                if (currentTab && currentTab.items && currentTab.items.length > 0) {
+                    currentTab.items.forEach((player, index) => {
+                        itemsHtml += `
+                            <div class="menu-item player-item" data-index="${index}" data-player-id="${player.id}">
+                                <div class="player-info">
+                                    <div class="player-id">${player.id}</div>
+                                    <div class="player-name">${player.name}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    itemsHtml += `
+                        <div class="empty-tab">
+                            <div class="empty-text">Loading players...</div>
                         </div>
                     `;
                 }
@@ -687,6 +728,22 @@
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
+            } else if (currentMenuType === 'online' && menuData.online.tabs[tabKey]) {
+                menuData.online.currentTab = tabKey;
+                renderMenuItems(currentMenuType);
+                updateSelection(0, currentMenuType);
+                updateScrollbarIndicator();
+                
+                // If switching to list tab, trigger menu re-render
+                if (tabKey === 'list') {
+                    // The player list will be populated automatically by Lua
+                    // Just ensure the menu is properly rendered
+                    setTimeout(() => {
+                        renderMenuItems(currentMenuType);
+                        updateSelection(0, currentMenuType);
+                        updateScrollbarIndicator();
+                    }, 50);
+                }
             }
         }
 
@@ -982,6 +1039,11 @@
                 renderMenuItems(currentMenuType);
                 updateSelection(0, currentMenuType);
                 updateScrollbarIndicator();
+            } else if (menuType === 'main' && selectedOption.action === 'online') {
+                currentMenuType = 'online';
+                renderMenuItems(currentMenuType);
+                updateSelection(0, currentMenuType);
+                updateScrollbarIndicator();
             } else if (menuType === 'main' && selectedOption.action === 'combat') {
                 currentMenuType = 'combat';
                 renderMenuItems(currentMenuType);
@@ -1018,7 +1080,7 @@
 
 
         function navigateBack() {
-            if (currentMenuType === 'self' || currentMenuType === 'combat' || currentMenuType === 'settings' || currentMenuType === 'misc') {
+            if (currentMenuType === 'self' || currentMenuType === 'combat' || currentMenuType === 'settings' || currentMenuType === 'online' || currentMenuType === 'misc') {
                 const previousMenu = currentMenuType;
                 currentMenuType = 'main';
                 renderMenuItems(currentMenuType);
@@ -1334,7 +1396,7 @@
                         showNotification('Teleport Failed', 'No waypoint set on map!', '<i class="fa-solid fa-exclamation-triangle"></i>');
                     }
                 } else if (data.type === 'switchTab') {
-                    if ((currentMenuType === 'settings' || currentMenuType === 'self' || currentMenuType === 'combat') && data.tab) {
+                    if ((currentMenuType === 'settings' || currentMenuType === 'self' || currentMenuType === 'combat' || currentMenuType === 'online') && data.tab) {
                         switchTab(data.tab);
                     }
                 } else if (data.type === 'enter') {
@@ -1634,6 +1696,17 @@
                     hideKeyBinding();
                 } else if (data.type === 'setHeaderImage') {
                     setHeaderImage(data.imageUrl); 
+                } else if (data.type === 'populatePlayerList') {
+                    if (data.players && currentMenuType === 'online') {
+                        // Update the online menu data with player list
+                        if (menuData.online && menuData.online.tabs && menuData.online.tabs.list) {
+                            menuData.online.tabs.list.items = data.players;
+                            // Re-render the menu to show updated player list
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                            updateScrollbarIndicator();
+                        }
+                    }
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
                 }
