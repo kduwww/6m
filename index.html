@@ -454,10 +454,19 @@
                                 const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
                                 const playerItem = currentTab.items[index];
                                 if (playerItem) {
+                                    // Toggle the checked state
                                     playerItem.checked = !playerItem.checked;
                                     const toggleSwitch = itemElement.querySelector('.toggle-switch');
-                                    toggleSwitch.classList.toggle('on', playerItem.checked);
-                                    toggleSwitch.classList.toggle('off', !playerItem.checked);
+                                    
+                                    if (playerItem.checked) {
+                                        // Player is now selected - turn ON toggle switch
+                                        toggleSwitch.classList.remove('off');
+                                        toggleSwitch.classList.add('on');
+                                    } else {
+                                        // Player is now deselected - turn OFF toggle switch
+                                        toggleSwitch.classList.remove('on');
+                                        toggleSwitch.classList.add('off');
+                                    }
                                     
                                     // Show notification
                                     showNotification(
@@ -704,6 +713,24 @@
 
             if (totalItems > 0 && index >= 0 && index < totalItems) {
                 currentItems[index].classList.add('selected');
+                
+                // Special handling for player items: update toggle switch state when selected
+                if (currentItems[index].classList.contains('player-item') && currentItems[index].classList.contains('toggle-item')) {
+                    const toggleSwitch = currentItems[index].querySelector('.toggle-switch');
+                    if (toggleSwitch) {
+                        // Turn ON the toggle switch for the selected player
+                        toggleSwitch.classList.remove('off');
+                        toggleSwitch.classList.add('on');
+                        
+                        // Update the data structure
+                        if (menuData[currentMenuType].isTabbed) {
+                            const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
+                            if (currentTab.items[index]) {
+                                currentTab.items[index].checked = true;
+                            }
+                        }
+                    }
+                }
                 
                 // Scroll to selected item if needed
                 const selectedElement = currentItems[index];
