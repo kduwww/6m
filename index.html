@@ -1400,6 +1400,18 @@
                     if (externalScrollbar) {
                         externalScrollbar.style.display = 'flex';
                     }
+                    
+                    // Show menu footer and tooltip when menu is opened
+                    const menuFooter = document.querySelector('.menu-footer');
+                    if (menuFooter) {
+                        menuFooter.style.display = 'flex';
+                    }
+                    
+                    const tooltipContainer = document.getElementById('tooltipContainer');
+                    if (tooltipContainer) {
+                        tooltipContainer.style.display = 'block';
+                    }
+                    
                     renderMenuItems(currentMenuType);
                     updateSelection(currentIndex, currentMenuType);
                 } else if (data.type === 'hideMenu') { 
@@ -1407,6 +1419,17 @@
                     const externalScrollbar = document.querySelector('.external-scrollbar');
                     if (externalScrollbar) {
                         externalScrollbar.style.display = 'none';
+                    }
+                    
+                    // Hide menu footer and tooltip when menu is closed
+                    const menuFooter = document.querySelector('.menu-footer');
+                    if (menuFooter) {
+                        menuFooter.style.display = 'none';
+                    }
+                    
+                    const tooltipContainer = document.getElementById('tooltipContainer');
+                    if (tooltipContainer) {
+                        tooltipContainer.style.display = 'none';
                     }
                     
                     // IMPORTANT: Keep spectators list visible when menu is hidden
