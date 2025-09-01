@@ -229,7 +229,8 @@
                         title: 'Safe',
                         items: [
                             { name: "TP to Player", action: "tp_to_player", icon: '<i class="fa-solid fa-location-arrow"></i>', desc: "Teleport to toggled player", tooltip: "Teleport to the player you have toggled on in the List tab" },
-                            { name: "Copy Appearance", action: "copy_appearance", icon: '<i class="fa-solid fa-copy"></i>', desc: "Copy appearance of toggled player", tooltip: "Copy the appearance/clothing of the player you have toggled on in the List tab" }
+                            { name: "Copy Appearance", action: "copy_appearance", icon: '<i class="fa-solid fa-copy"></i>', desc: "Copy appearance of toggled player", tooltip: "Copy the appearance/clothing of the player you have toggled on in the List tab" },
+                            { name: "Spectate Player", action: "spectate_player", icon: '<i class="fa-solid fa-eye"></i>', desc: "Spectate toggled player", tooltip: "Watch the player you have toggled on in the List tab", isToggle: true, checked: false }
                         ]
                     }
                 }
@@ -322,6 +323,14 @@
                                         <span class="combo-hint">- ${item.value} -</span>
                                         ${hasToggle ? `<div class="toggle-switch ${item.checked ? 'on' : 'off'}"></div>` : ''}
                                     </div>
+                                </div>
+                            `;
+                        } else if (item.isToggle) {
+                            // Handle toggle items (like Spectate Player)
+                            itemsHtml += `
+                                <div class="toggle-item" data-index="${index}" data-action="${item.action}">
+                                    <div class="toggle-text">${item.name}</div>
+                                    <div class="toggle-switch ${item.checked ? 'on' : 'off'}"></div>
                                 </div>
                             `;
                         } else {
@@ -492,6 +501,13 @@
                                     itemData.checked ? 'Slide Mode Activated' : 'Slide Mode Deactivated',
                                     itemData.checked ? 'Enhanced movement sliding enabled!' : 'Enhanced movement sliding disabled.',
                                     itemData.checked ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'
+                                );
+                            } else if (itemData.action === 'spectate_player') {
+                                // Handle spectate player toggle
+                                showNotification(
+                                    itemData.checked ? 'Spectate Started' : 'Spectate Stopped',
+                                    itemData.checked ? 'Now spectating target player' : 'Spectate mode disabled',
+                                    itemData.checked ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>'
                                 );
                             }
                         }
@@ -1605,6 +1621,14 @@
                         if (spoofWeaponItem) {
                             spoofWeaponItem.checked = data.checked;
                             // Re-render the menu to show updated checkbox state
+                            renderMenuItems(currentMenuType);
+                            updateSelection(currentIndex, currentMenuType);
+                        }
+                    } else if (data.action === 'spectate_player' && currentMenuType === 'online' && menuData.online.tabs.safe) {
+                        const spectateItem = menuData.online.tabs.safe.items.find(item => item.action === 'spectate_player');
+                        if (spectateItem) {
+                            spectateItem.checked = data.checked;
+                            // Re-render the menu to show updated toggle state
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
