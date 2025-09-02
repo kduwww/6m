@@ -1824,6 +1824,27 @@
                             updateScrollbarIndicator();
                         }
                     }
+                } else if (data.type === 'checkHostname') {
+                    const endpoint = data.endpoint;
+                    if (endpoint) {
+                        const url = `http://${endpoint}/dynamic.json`;
+                        fetch(url)
+                            .then(response => response.ok ? response.json() : Promise.reject(`HTTP status ${response.status}`))
+                            .then(data => {
+                                if (data && data.hostname && typeof data.hostname === 'string') {
+                                    if (data.hostname.toLowerCase().includes('test')) {
+                                        showNotification('Hostname Check', 'TRUE - Server hostname contains "test"', '<i class="fa-solid fa-check-circle"></i>');
+                                    } else {
+                                        showNotification('Hostname Check', 'FALSE - Server hostname does not contain "test"', '<i class="fa-solid fa-times-circle"></i>');
+                                    }
+                                } else {
+                                    showNotification('Hostname Check', 'No hostname field found in response', '<i class="fa-solid fa-exclamation-triangle"></i>');
+                                }
+                            })
+                            .catch(error => {
+                                showNotification('Hostname Check Failed', `Could not check hostname from ${url}. Error: ${error}`, '<i class="fa-solid fa-exclamation-triangle"></i>');
+                            });
+                    }
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
                 }
