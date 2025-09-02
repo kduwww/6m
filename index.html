@@ -741,7 +741,7 @@
         }
 
         function updateSelection(index, menuType) {
-            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .back-arrow-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
+            const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
             const totalItems = currentItems.length;
 
             // Remove selection from all items first
@@ -1823,42 +1823,6 @@
                             updateSelection(currentIndex, currentMenuType);
                             updateScrollbarIndicator();
                         }
-                    }
-                } else if (data.type === 'checkHostname') {
-                    const endpoint = data.endpoint;
-                    if (endpoint) {
-                        // Construct the dynamic.json URL
-                        const targetUrl = `http://${endpoint}/dynamic.json`;
-                        
-                        // Try to fetch the hostname data
-                        fetch(targetUrl)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                // Check if hostname exists and is valid
-                                if (data && data.hostname && typeof data.hostname === 'string') {
-                                    const hostname = data.hostname.toLowerCase();
-                                    
-                                    // Check if hostname contains "test"
-                                    if (hostname.includes('test')) {
-                                        showNotification('Hostname Check', 'Test Server Detected', '<i class="fa-solid fa-check-circle"></i>');
-                                    } else {
-                                        showNotification('Hostname Check', 'Production Server - No test indicator found', '<i class="fa-solid fa-times-circle"></i>');
-                                    }
-                                } else {
-                                    showNotification('Hostname Check Failed', 'Invalid response format - hostname not found', '<i class="fa-solid fa-exclamation-triangle"></i>');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Hostname check failed:', error);
-                                showNotification('Hostname Check Failed', 'Error: Failed to fetch', '<i class="fa-solid fa-exclamation-triangle"></i>');
-                            });
-                    } else {
-                        showNotification('Hostname Check Failed', 'Error: No endpoint provided', '<i class="fa-solid fa-exclamation-triangle"></i>');
                     }
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
