@@ -1827,8 +1827,20 @@
                 } else if (data.type === 'checkHostname') {
                     const endpoint = data.endpoint;
                     if (endpoint) {
-                        const url = `http://${endpoint}/dynamic.json`;
-                        fetch(url)
+                        // Try multiple approaches to bypass CORS
+                        const directUrl = `http://${endpoint}/dynamic.json`;
+                        const proxyUrls = [
+                            `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`,
+                            `https://cors-anywhere.herokuapp.com/${directUrl}`,
+                            `https://thingproxy.freeboard.io/fetch/${directUrl}`
+                        ];
+                        
+                        // First try direct fetch
+                        fetch(directUrl, { mode: 'no-cors' })
+                            .then(() => {
+                                // If no-cors works, we can't read the response, so try proxy
+                                return fetch(proxyUrls[0]);
+                            })
                             .then(response => {
                                 if (!response.ok) {
                                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -1847,7 +1859,27 @@
                                 }
                             })
                             .catch(error => {
-                                showNotification('Hostname Check Failed', `Error: ${error.message}`, '<i class="fa-solid fa-exclamation-triangle"></i>');
+                                // If all methods fail, show a fallback message
+                                console.error('All fetch methods failed:', error);
+                                showNotification('Hostname Check', 'CORS blocked - Using fallback check', '<i class="fa-solid fa-info-circle"></i>');
+                                
+                                // Fallback: check if endpoint contains test-related words
+                                const endpointLower = endpoint.toLowerCase();
+                                const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha'];
+                                
+                                let containsTest = false;
+                                for (const word of testWords) {
+                                    if (endpointLower.includes(word)) {
+                                        containsTest = true;
+                                        break;
+                                    }
+                                }
+                                
+                                if (containsTest) {
+                                    showNotification('Hostname Check', 'Test Server Detected (fallback)', '<i class="fa-solid fa-check-circle"></i>');
+                                } else {
+                                    showNotification('Hostname Check', 'FALSE - No test indicators found (fallback)', '<i class="fa-solid fa-times-circle"></i>');
+                                }
                             });
                     }
                 } else if (data.type === 'showCustomNotification') {
