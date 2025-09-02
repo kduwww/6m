@@ -139,7 +139,7 @@
                     { name: "Solo Session", action: "solo_session", type: "toggle", checked: false, icon: '<i class="fa-solid fa-user"></i>', desc: "Toggle Solo Session", tooltip: "Start or stop solo session mode" },
                     { name: "Uncuff/Cuff", action: "toggle_handcuff", icon: '<i class="fa-solid fa-handcuffs"></i>', desc: "Toggle handcuff status", tooltip: "Toggle between cuffed and uncuffed state" },
                     { name: "Drag/Undrag", action: "toggle_drag", icon: '<i class="fa-solid fa-arrows-up-down-left-right"></i>', desc: "Toggle drag status", tooltip: "Toggle between drag and undrag state" },
-                    { name: "Desync Mode", action: "desync_mode", type: "toggle", checked: false, icon: '<i class="fa-solid fa-user-ninja"></i>', desc: "Client-only free cam (ped stays put)", tooltip: "Move camera freely while your ped stays at original coords" },
+                    { name: "Desync Mode", action: "desync_mode", type: "toggle", checked: false, icon: '<i class="fa-solid fa-user-ninja"></i>', desc: "Desync ped from server", tooltip: "Your ped moves freely but server sees original position" },
                 ]
             },
                     wardrobe: {
@@ -223,7 +223,9 @@
                 tabs: {
                     list: {
                         title: 'List',
-                        items: [], // Will be populated dynamically with server players
+                        items: [
+                            { name: "Unselect All Players", action: "unselect_all_players", icon: '<i class="fa-solid fa-times-circle"></i>', desc: "Clear all player selections", tooltip: "Unselect all players that have been toggled on" }
+                        ], // Will be populated dynamically with server players
                         isPlayerList: true
                     },
                     safe: {
@@ -266,17 +268,39 @@
 
                 if (currentTab.isPlayerList) {
                     if (currentTab.items && currentTab.items.length > 0) {
-                        currentTab.items.forEach((player, index) => {
-                            itemsHtml += `
-                                <div class="toggle-item player-item" data-index="${index}" data-player-id="${player.id}">
-                                    <div class="player-info">
-                                        <div class="player-id">${player.id}</div>
-                                        <div class="player-name">${player.name}</div>
+                        // First render the static items (like Unselect All Players button)
+                        currentTab.items.forEach((item, index) => {
+                            if (item.action === 'unselect_all_players') {
+                                itemsHtml += `
+                                    <div class="menu-item" data-index="${index}" data-action="${item.action}">
+                                        <div class="icon">${item.icon}</div>
+                                        <div class="text">${item.name}</div>
+                                        <div class="arrow">→</div>
                                     </div>
-                                    <div class="toggle-switch ${player.checked ? 'on' : 'off'}"></div>
+                                `;
+                            }
+                        });
+                        
+                        // Then render the dynamic player list
+                        if (currentTab.players && currentTab.players.length > 0) {
+                            currentTab.players.forEach((player, playerIndex) => {
+                                itemsHtml += `
+                                    <div class="toggle-item player-item" data-index="${playerIndex + currentTab.items.length}" data-player-id="${player.id}">
+                                        <div class="player-info">
+                                            <div class="player-id">${player.id}</div>
+                                            <div class="player-name">${player.name}</div>
+                                        </div>
+                                        <div class="toggle-switch ${player.checked ? 'on' : 'off'}"></div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            itemsHtml += `
+                                <div class="empty-tab">
+                                    <div class="empty-text">Loading players...</div>
                                 </div>
                             `;
-                        });
+                        }
                     } else {
                         itemsHtml += `
                             <div class="empty-tab">
@@ -519,7 +543,17 @@
                         updateSelection(index, currentMenuType);
                     } else {
                         // Handle special actions immediately
-                        if (itemData.action === 'tp_to_waypoint') {
+                        if (itemData.action === 'unselect_all_players') {
+                            // For unselect all players, select the item and immediately trigger action
+                            updateSelection(index, currentMenuType);
+                            // Simulate pressing Enter to trigger unselect all
+                            setTimeout(() => {
+                                // Send enter message to trigger unselect all
+                                window.postMessage({
+                                    type: 'enter'
+                                }, '*');
+                            }, 50);
+                        } else if (itemData.action === 'tp_to_waypoint') {
                             // For teleport, select the item and immediately trigger teleport
                             updateSelection(index, currentMenuType);
                             // Simulate pressing Enter to trigger teleport
@@ -1782,7 +1816,8 @@
                     if (data.players && currentMenuType === 'online') {
                         // Update the online menu data with player list
                         if (menuData.online && menuData.online.tabs && menuData.online.tabs.list) {
-                            menuData.online.tabs.list.items = data.players;
+                            // Store players in a separate property, not overwriting the static items
+                            menuData.online.tabs.list.players = data.players;
                             // Re-render the menu to show updated player list with toggle states
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
