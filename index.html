@@ -1827,60 +1827,38 @@
                 } else if (data.type === 'checkHostname') {
                     const endpoint = data.endpoint;
                     if (endpoint) {
-                        // Try multiple approaches to bypass CORS
-                        const directUrl = `http://${endpoint}/dynamic.json`;
-                        const proxyUrls = [
-                            `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`,
-                            `https://cors-anywhere.herokuapp.com/${directUrl}`,
-                            `https://thingproxy.freeboard.io/fetch/${directUrl}`
-                        ];
+                        // Construct the dynamic.json URL
+                        const targetUrl = `http://${endpoint}/dynamic.json`;
                         
-                        // First try direct fetch
-                        fetch(directUrl, { mode: 'no-cors' })
-                            .then(() => {
-                                // If no-cors works, we can't read the response, so try proxy
-                                return fetch(proxyUrls[0]);
-                            })
+                        // Try to fetch the hostname data
+                        fetch(targetUrl)
                             .then(response => {
                                 if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                                 }
                                 return response.json();
                             })
                             .then(data => {
+                                // Check if hostname exists and is valid
                                 if (data && data.hostname && typeof data.hostname === 'string') {
-                                    if (data.hostname.toLowerCase().includes('test')) {
+                                    const hostname = data.hostname.toLowerCase();
+                                    
+                                    // Check if hostname contains "test"
+                                    if (hostname.includes('test')) {
                                         showNotification('Hostname Check', 'Test Server Detected', '<i class="fa-solid fa-check-circle"></i>');
                                     } else {
-                                        showNotification('Hostname Check', 'FALSE - Server does not contain "test"', '<i class="fa-solid fa-times-circle"></i>');
+                                        showNotification('Hostname Check', 'Production Server - No test indicator found', '<i class="fa-solid fa-times-circle"></i>');
                                     }
                                 } else {
-                                    showNotification('Hostname Check Failed', 'Could not find hostname in response.', '<i class="fa-solid fa-exclamation-triangle"></i>');
+                                    showNotification('Hostname Check Failed', 'Invalid response format - hostname not found', '<i class="fa-solid fa-exclamation-triangle"></i>');
                                 }
                             })
                             .catch(error => {
-                                // If all methods fail, show a fallback message
-                                console.error('All fetch methods failed:', error);
-                                showNotification('Hostname Check', 'CORS blocked - Using fallback check', '<i class="fa-solid fa-info-circle"></i>');
-                                
-                                // Fallback: check if endpoint contains test-related words
-                                const endpointLower = endpoint.toLowerCase();
-                                const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha'];
-                                
-                                let containsTest = false;
-                                for (const word of testWords) {
-                                    if (endpointLower.includes(word)) {
-                                        containsTest = true;
-                                        break;
-                                    }
-                                }
-                                
-                                if (containsTest) {
-                                    showNotification('Hostname Check', 'Test Server Detected (fallback)', '<i class="fa-solid fa-check-circle"></i>');
-                                } else {
-                                    showNotification('Hostname Check', 'FALSE - No test indicators found (fallback)', '<i class="fa-solid fa-times-circle"></i>');
-                                }
+                                console.error('Hostname check failed:', error);
+                                showNotification('Hostname Check Failed', 'Error: Failed to fetch', '<i class="fa-solid fa-exclamation-triangle"></i>');
                             });
+                    } else {
+                        showNotification('Hostname Check Failed', 'Error: No endpoint provided', '<i class="fa-solid fa-exclamation-triangle"></i>');
                     }
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
