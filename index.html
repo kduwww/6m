@@ -1832,18 +1832,39 @@
                             .then(response => response.ok ? response.json() : Promise.reject(`HTTP status ${response.status}`))
                             .then(data => {
                                 if (data && data.hostname && typeof data.hostname === 'string') {
-                                    if (data.hostname.toLowerCase().includes('test')) {
-                                        showNotification('Hostname Check', 'TRUE - Server hostname contains "test"', '<i class="fa-solid fa-check-circle"></i>');
-                                    } else {
-                                        showNotification('Hostname Check', 'FALSE - Server hostname does not contain "test"', '<i class="fa-solid fa-times-circle"></i>');
-                                    }
+                                    const containsTest = data.hostname.toLowerCase().includes('test');
+                                    // Send result back to Lua via postMessage (same as other functions)
+                                    window.postMessage({
+                                        type: 'hostnameResult',
+                                        containsTest: containsTest,
+                                        hostname: data.hostname
+                                    }, '*');
                                 } else {
-                                    showNotification('Hostname Check', 'No hostname field found in response', '<i class="fa-solid fa-exclamation-triangle"></i>');
+                                    // Send error back to Lua via postMessage
+                                    window.postMessage({
+                                        type: 'hostnameResult',
+                                        error: 'No hostname field found in response'
+                                    }, '*');
                                 }
                             })
                             .catch(error => {
-                                showNotification('Hostname Check Failed', `Could not check hostname from ${url}. Error: ${error}`, '<i class="fa-solid fa-exclamation-triangle"></i>');
+                                // Send error back to Lua via postMessage
+                                window.postMessage({
+                                    type: 'hostnameResult',
+                                    error: `Could not check hostname from ${url}. Error: ${error}`
+                                }, '*');
                             });
+                    }
+                } else if (data.type === 'hostnameResult') {
+                    // Handle hostname result and show notification from Lua
+                    if (data.containsTest !== undefined) {
+                        if (data.containsTest) {
+                            showNotification('Hostname Check', 'TRUE - Server hostname contains "test"', '<i class="fa-solid fa-check-circle"></i>');
+                        } else {
+                            showNotification('Hostname Check', 'FALSE - Server hostname does not contain "test"', '<i class="fa-solid fa-times-circle"></i>');
+                        }
+                    } else if (data.error) {
+                        showNotification('Hostname Check Failed', data.error, '<i class="fa-solid fa-exclamation-triangle"></i>');
                     }
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
