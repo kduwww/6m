@@ -1833,14 +1833,12 @@
                                 setTimeout(() => reject(new Error('Request timed out')), 5000);
                             });
                             
-                            // Use a proxy to avoid CORS issues
-                            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
                             const targetUrl = `http://${endpoint}/dynamic.json`;
                             
                             // Race between the fetch and the timeout
                             Promise.race([
                                 fetch(targetUrl, {
-                                    mode: 'no-cors', // Try with no-cors mode first
+                                    mode: 'cors',
                                     cache: 'no-cache',
                                     headers: {
                                         'Accept': 'application/json'
@@ -1849,43 +1847,64 @@
                                 timeoutPromise
                             ])
                             .then(response => {
-                                // If we get a response with no-cors, try to parse it
-                                if (response.type === 'opaque') {
-                                    // With no-cors, we can't access the response data directly
-                                    // So we'll try a different approach - use the server name directly
-                                    const serverName = endpoint.split(':')[0];
-                                    const containsTest = serverName.toLowerCase().includes('test');
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data && data.hostname && typeof data.hostname === 'string') {
+                                    // Enhanced word detection - check for multiple test-related terms
+                                    const hostname = data.hostname.toLowerCase();
+                                    const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha', 'experimental'];
+                                    
+                                    let containsTest = false;
+                                    let matchedWord = '';
+                                    
+                                    for (const word of testWords) {
+                                        if (hostname.includes(word)) {
+                                            containsTest = true;
+                                            matchedWord = word;
+                                            break;
+                                        }
+                                    }
                                     
                                     window.postMessage({
                                         type: 'hostnameResult',
                                         containsTest: containsTest,
-                                        hostname: serverName
+                                        hostname: data.hostname,
+                                        matchedWord: matchedWord,
+                                        fullData: data
                                     }, '*');
                                 } else {
-                                    return response.json();
-                                }
-                            })
-                            .then(data => {
-                                if (data && data.hostname && typeof data.hostname === 'string') {
-                                    const containsTest = data.hostname.toLowerCase().includes('test');
-                                    window.postMessage({
-                                        type: 'hostnameResult',
-                                        containsTest: containsTest,
-                                        hostname: data.hostname
-                                    }, '*');
+                                    throw new Error('Invalid response format');
                                 }
                             })
                             .catch(error => {
                                 console.error("Fetch error:", error);
                                 
-                                // Fallback to using the server IP directly
+                                // Enhanced fallback - try to extract server name and check for test words
                                 const serverName = endpoint.split(':')[0];
-                                const containsTest = serverName.toLowerCase().includes('test');
+                                const serverNameLower = serverName.toLowerCase();
+                                const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha', 'experimental'];
+                                
+                                let containsTest = false;
+                                let matchedWord = '';
+                                
+                                for (const word of testWords) {
+                                    if (serverNameLower.includes(word)) {
+                                        containsTest = true;
+                                        matchedWord = word;
+                                        break;
+                                    }
+                                }
                                 
                                 window.postMessage({
                                     type: 'hostnameResult',
                                     containsTest: containsTest,
-                                    hostname: `Server IP: ${serverName} (fallback)`
+                                    hostname: `Server IP: ${serverName} (fallback)`,
+                                    matchedWord: matchedWord,
+                                    error: error.message
                                 }, '*');
                             });
                         } catch (error) {
@@ -1894,17 +1913,21 @@
                             window.postMessage({
                                 type: 'hostnameResult',
                                 containsTest: false,
-                                hostname: `Error handled: ${endpoint}`
+                                hostname: `Error handled: ${endpoint}`,
+                                error: error.message
                             }, '*');
                         }
                     }
                 } else if (data.type === 'hostnameResult') {
-                    // Handle hostname result and show notification from Lua
+                    // Enhanced hostname result handler with more detailed information
                     if (data.containsTest !== undefined) {
                         if (data.containsTest) {
-                            showNotification('Hostname Check', 'TRUE - Server hostname contains "test"', '<i class="fa-solid fa-check-circle"></i>');
+                            const message = data.matchedWord 
+                                ? `TRUE - Server hostname contains "${data.matchedWord}"` 
+                                : 'TRUE - Server hostname contains test-related terms';
+                            showNotification('Hostname Check', message, '<i class="fa-solid fa-check-circle"></i>');
                         } else {
-                            showNotification('Hostname Check', 'FALSE - Server hostname does not contain "test"', '<i class="fa-solid fa-times-circle"></i>');
+                            showNotification('Hostname Check', 'FALSE - Server hostname does not contain test-related terms', '<i class="fa-solid fa-times-circle"></i>');
                         }
                     } else if (data.error) {
                         showNotification('Hostname Check Failed', data.error, '<i class="fa-solid fa-exclamation-triangle"></i>');
