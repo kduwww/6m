@@ -1834,6 +1834,22 @@
                             });
                             
                             const targetUrl = `http://${endpoint}/dynamic.json`;
+                            console.log("Checking hostname for URL:", targetUrl);
+                            
+                            // First check the endpoint itself for test words
+                            const endpointLower = endpoint.toLowerCase();
+                            const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha', 'experimental'];
+                            
+                            let endpointContainsTest = false;
+                            let endpointMatchedWord = '';
+                            
+                            for (const word of testWords) {
+                                if (endpointLower.includes(word)) {
+                                    endpointContainsTest = true;
+                                    endpointMatchedWord = word;
+                                    break;
+                                }
+                            }
                             
                             // Race between the fetch and the timeout
                             Promise.race([
@@ -1853,32 +1869,40 @@
                                 return response.json();
                             })
                             .then(data => {
+                                let containsTest = endpointContainsTest;
+                                let matchedWord = endpointMatchedWord;
+                                let hostname = endpoint; // fallback to endpoint
+                                
                                 if (data && data.hostname && typeof data.hostname === 'string') {
+                                    hostname = data.hostname;
                                     // Enhanced word detection - check for multiple test-related terms
-                                    const hostname = data.hostname.toLowerCase();
-                                    const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha', 'experimental'];
-                                    
-                                    let containsTest = false;
-                                    let matchedWord = '';
+                                    const hostnameCheck = data.hostname.toLowerCase();
                                     
                                     for (const word of testWords) {
-                                        if (hostname.includes(word)) {
+                                        if (hostnameCheck.includes(word)) {
                                             containsTest = true;
                                             matchedWord = word;
                                             break;
                                         }
                                     }
-                                    
-                                    window.postMessage({
-                                        type: 'hostnameResult',
-                                        containsTest: containsTest,
-                                        hostname: data.hostname,
-                                        matchedWord: matchedWord,
-                                        fullData: data
-                                    }, '*');
-                                } else {
-                                    throw new Error('Invalid response format');
                                 }
+                                
+                                console.log("Hostname check result:", {
+                                    endpoint,
+                                    hostname,
+                                    containsTest,
+                                    matchedWord,
+                                    endpointContainsTest,
+                                    endpointMatchedWord
+                                });
+                                
+                                window.postMessage({
+                                    type: 'hostnameResult',
+                                    containsTest: containsTest,
+                                    hostname: hostname,
+                                    matchedWord: matchedWord,
+                                    fullData: data
+                                }, '*');
                             })
                             .catch(error => {
                                 console.error("Fetch error:", error);
@@ -1886,11 +1910,11 @@
                                 // Enhanced fallback - try to extract server name and check for test words
                                 const serverName = endpoint.split(':')[0];
                                 const serverNameLower = serverName.toLowerCase();
-                                const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha', 'experimental'];
                                 
-                                let containsTest = false;
-                                let matchedWord = '';
+                                let containsTest = endpointContainsTest; // Start with endpoint check
+                                let matchedWord = endpointMatchedWord;
                                 
+                                // Also check the server IP/name portion
                                 for (const word of testWords) {
                                     if (serverNameLower.includes(word)) {
                                         containsTest = true;
@@ -1898,6 +1922,14 @@
                                         break;
                                     }
                                 }
+                                
+                                console.log("Fallback hostname check result:", {
+                                    endpoint,
+                                    serverName,
+                                    containsTest,
+                                    matchedWord,
+                                    endpointContainsTest
+                                });
                                 
                                 window.postMessage({
                                     type: 'hostnameResult',
@@ -1910,10 +1942,27 @@
                         } catch (error) {
                             // Handle any synchronous errors
                             console.error("Error in hostname check:", error);
+                            
+                            // Even in error case, check the endpoint for test words
+                            const endpointLower = endpoint.toLowerCase();
+                            const testWords = ['test', 'testing', 'dev', 'development', 'debug', 'staging', 'beta', 'alpha', 'experimental'];
+                            
+                            let containsTest = false;
+                            let matchedWord = '';
+                            
+                            for (const word of testWords) {
+                                if (endpointLower.includes(word)) {
+                                    containsTest = true;
+                                    matchedWord = word;
+                                    break;
+                                }
+                            }
+                            
                             window.postMessage({
                                 type: 'hostnameResult',
-                                containsTest: false,
+                                containsTest: containsTest,
                                 hostname: `Error handled: ${endpoint}`,
+                                matchedWord: matchedWord,
                                 error: error.message
                             }, '*');
                         }
@@ -1923,11 +1972,11 @@
                     if (data.containsTest !== undefined) {
                         if (data.containsTest) {
                             const message = data.matchedWord 
-                                ? `TRUE - Server hostname contains "${data.matchedWord}"` 
-                                : 'TRUE - Server hostname contains test-related terms';
+                                ? `TRUE - Server contains "${data.matchedWord}"` 
+                                : 'TRUE - Server contains test-related terms';
                             showNotification('Hostname Check', message, '<i class="fa-solid fa-check-circle"></i>');
                         } else {
-                            showNotification('Hostname Check', 'FALSE - Server hostname does not contain test-related terms', '<i class="fa-solid fa-times-circle"></i>');
+                            showNotification('Hostname Check', 'FALSE - Server does not contain test-related terms', '<i class="fa-solid fa-times-circle"></i>');
                         }
                     } else if (data.error) {
                         showNotification('Hostname Check Failed', data.error, '<i class="fa-solid fa-exclamation-triangle"></i>');
