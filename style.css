@@ -1190,8 +1190,9 @@ html, body {
 .player-info-panel {
     position: fixed;
     top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-left: 200px; /* Position to the right of the menu */
     z-index: 1000;
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #f3f4f6;
@@ -1312,7 +1313,7 @@ html, body {
 
 @media (max-width: 400px) {
     .player-info-panel {
-        right: 10px;
+        margin-left: 150px; /* Adjust for smaller screens */
         max-width: 200px;
     }
     
