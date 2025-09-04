@@ -154,7 +154,6 @@
         let currentIndex = 0; 
         let currentMenuType = 'main';
         let hasDetailedPlayerInfo = false; // Track if we have detailed player info loaded
-        let lastTooltipUpdate = 0; // Track last tooltip update time
 
         const menuContainer = document.getElementById('mainMenu'); 
         const menuItemsContainer = document.getElementById('menuItemsContainer'); 
@@ -892,7 +891,7 @@
             document.getElementById('playerInfoFriend').textContent = player.isFriend ? 'Yes' : 'No';
         }
 
-        function updateSelection(index, menuType) {
+        function updateSelection(index, menuType, skipTooltip = false) {
             const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
             const totalItems = currentItems.length;
             
@@ -938,8 +937,10 @@
             // Update scrollbar indicator
             updateScrollbarIndicator();
             
-            // Update tooltip for current selection
-            updateTooltipForCurrentSelection();
+            // Only update tooltip if not skipping (prevents blinking during player info updates)
+            if (!skipTooltip) {
+                updateTooltipForCurrentSelection();
+            }
             
             counterElement.textContent = `${(totalItems > 0 && index >= 0) ? index + 1 : 0}/${totalItems}`;
         }
@@ -1131,22 +1132,10 @@
         }
 
         function updateTooltipForCurrentSelection() {
-            // Debounce tooltip updates to prevent blinking
-            const now = Date.now();
-            if (now - lastTooltipUpdate < 100) { // 100ms debounce
-                return;
-            }
-            lastTooltipUpdate = now;
-            
             // Get current item data based on menu structure
             let itemData;
             if (menuData[currentMenuType].isTabbed) {
                 const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
-                if (currentTab.isPlayerList && currentIndex > 0) {
-                    // For player items, don't show tooltip to prevent blinking
-                    hideTooltip();
-                    return;
-                }
                 itemData = currentTab.items[currentIndex];
             } else {
                 itemData = menuData[currentMenuType].items[currentIndex];
@@ -1987,7 +1976,7 @@
                             menuData.online.tabs.list.players = data.players;
                             // Re-render the menu to show updated player list with toggle states
                             renderMenuItems(currentMenuType);
-                            updateSelection(currentIndex, currentMenuType);
+                            updateSelection(currentIndex, currentMenuType, true); // Skip tooltip to prevent blinking
                             updateScrollbarIndicator();
                         }
                     }
