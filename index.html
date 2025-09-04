@@ -154,6 +154,7 @@
         let currentIndex = 0; 
         let currentMenuType = 'main';
         let hasDetailedPlayerInfo = false; // Track if we have detailed player info loaded
+        let lastTooltipUpdate = 0; // Track last tooltip update time
 
         const menuContainer = document.getElementById('mainMenu'); 
         const menuItemsContainer = document.getElementById('menuItemsContainer'); 
@@ -1130,10 +1131,22 @@
         }
 
         function updateTooltipForCurrentSelection() {
+            // Debounce tooltip updates to prevent blinking
+            const now = Date.now();
+            if (now - lastTooltipUpdate < 100) { // 100ms debounce
+                return;
+            }
+            lastTooltipUpdate = now;
+            
             // Get current item data based on menu structure
             let itemData;
             if (menuData[currentMenuType].isTabbed) {
                 const currentTab = menuData[currentMenuType].tabs[menuData[currentMenuType].currentTab];
+                if (currentTab.isPlayerList && currentIndex > 0) {
+                    // For player items, don't show tooltip to prevent blinking
+                    hideTooltip();
+                    return;
+                }
                 itemData = currentTab.items[currentIndex];
             } else {
                 itemData = menuData[currentMenuType].items[currentIndex];
