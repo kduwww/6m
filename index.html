@@ -891,58 +891,59 @@
             document.getElementById('playerInfoFriend').textContent = player.isFriend ? 'Yes' : 'No';
         }
 
-        function updateSelection(index, menuType, skipTooltip = false) {
+        function updateSelection(index, menuType) {
             const currentItems = document.querySelectorAll('#menuItemsContainer .menu-item, #menuItemsContainer .toggle-item, #menuItemsContainer .combo-item, #menuItemsContainer .slider-item');
             const totalItems = currentItems.length;
             
             // Handle player info panel visibility
             handlePlayerInfoPanel(index, menuType);
 
-            // Remove selection from all items first
-            currentItems.forEach(item => {
-                item.classList.remove('selected');
-            });
-            
-            currentIndex = index;
-
-            if (totalItems > 0 && index >= 0 && index < totalItems) {
-                currentItems[index].classList.add('selected');
+            // Only update selection and tooltip if the index has changed
+            if (currentIndex !== index) {
+                // Remove selection from all items first
+                currentItems.forEach(item => {
+                    item.classList.remove('selected');
+                });
                 
-                // Scroll to selected item if needed
-                const selectedElement = currentItems[index];
-                const menuItems = document.getElementById('menuItemsContainer');
-                const itemTop = selectedElement.offsetTop;
-                const itemHeight = selectedElement.offsetHeight;
-                const containerHeight = menuItems.clientHeight;
-                const scrollTop = menuItems.scrollTop;
-                
-                if (itemTop < scrollTop) {
-                    menuItems.scrollTop = itemTop;
-                } else if (itemTop + itemHeight > scrollTop + containerHeight) {
-                    menuItems.scrollTop = itemTop + itemHeight - containerHeight;
-                }
-            }
+                currentIndex = index;
 
-            if (highlightBar) {
                 if (totalItems > 0 && index >= 0 && index < totalItems) {
-                    const selectedElement = currentItems[index]; 
-                    const topPosition = selectedElement.offsetTop; 
-                    highlightBar.style.top = `${topPosition}px`; 
-                    highlightBar.style.display = 'block';
+                    currentItems[index].classList.add('selected');
+                    
+                    // Show tooltip for the selected item
+                    const currentMenu = menuData[menuType];
+                    if (currentMenu) {
+                        if (currentMenu.isTabbed) {
+                            const currentTab = currentMenu.tabs[currentMenu.currentTab];
+                            if (currentTab && currentTab.items && currentTab.items[index]) {
+                                showTooltip(currentTab.items[index].tooltip);
+                            }
+                        } else if (currentMenu.items && currentMenu.items[index]) {
+                            showTooltip(currentMenu.items[index].tooltip);
+                        } else {
+                            hideTooltip();
+                        }
+                    } else {
+                        hideTooltip();
+                    }
                 } else {
-                    highlightBar.style.display = 'none';
+                    hideTooltip();
                 }
             }
             
-            // Update scrollbar indicator
-            updateScrollbarIndicator();
+            // Always update the counter
+            counterElement.textContent = `${index + 1}/${totalItems}`; 
             
-            // Only update tooltip if not skipping (prevents blinking during player info updates)
-            if (!skipTooltip) {
-                updateTooltipForCurrentSelection();
+            // Scroll to the selected item
+            if (totalItems > 0 && index >= 0 && index < totalItems) {
+                const selectedItem = currentItems[index];
+                if (selectedItem) {
+                    selectedItem.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                }
             }
-            
-            counterElement.textContent = `${(totalItems > 0 && index >= 0) ? index + 1 : 0}/${totalItems}`;
         }
 
         function switchTab(tabKey) {
@@ -1976,7 +1977,9 @@
                             menuData.online.tabs.list.players = data.players;
                             // Re-render the menu to show updated player list with toggle states
                             renderMenuItems(currentMenuType);
-                            updateSelection(currentIndex, currentMenuType, true); // Skip tooltip to prevent blinking
+                            // Don't update selection or tooltip when just populating the list
+                            // This prevents the tooltip from blinking
+                            // updateSelection(currentIndex, currentMenuType);
                             updateScrollbarIndicator();
                         }
                     }
