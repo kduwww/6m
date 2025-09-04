@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 166</span>
+            <span class="version">Version: Beta | build: 170</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -74,7 +74,7 @@
                 <span class="player-value" id="playerInfoDistance">0m</span>
             </div>
             <div class="player-row">
-                <span class="player-label">Server ID</span>
+                <span class="player-label">Local ID</span>
                 <span class="player-value" id="playerInfoId">0</span>
             </div>
             <div class="player-row">
@@ -343,7 +343,7 @@
                                 itemsHtml += `
                                     <div class="toggle-item player-item" data-index="${playerIndex + currentTab.items.length}" data-player-id="${player.id}">
                                         <div class="player-info">
-                                            <div class="player-id">${player.id}</div>
+                                            <div class="player-id">${player.localId || player.id}</div>
                                             <div class="player-name">${player.name}</div>
                                         </div>
                                         <div class="toggle-switch ${player.checked ? 'on' : 'off'}"></div>
@@ -837,7 +837,7 @@
             
             // Update basic info
             document.getElementById('playerInfoName').textContent = player.name || 'Unknown Player';
-            document.getElementById('playerInfoId').textContent = player.id || '0';
+            document.getElementById('playerInfoId').textContent = player.localId || player.id || '0';
             document.getElementById('playerInfoDistance').textContent = (player.distance || 0) + 'm';
             
             // Update health
