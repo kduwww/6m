@@ -38,6 +38,7 @@
         <div class="menu-footer">
             <span class="version">Version: Beta | build: 153</span>
             <span class="counter" id="counter">1/9</span> 
+            <button onclick="testPlayerInfo()" style="background: red; color: white; border: none; padding: 5px; margin-left: 10px; cursor: pointer;">TEST</button>
         </div>
 
     </div>
@@ -1082,9 +1083,18 @@
 
         // Player Info Panel Functions
         function showPlayerInfo(playerData) {
+            console.log('🔍 showPlayerInfo called with:', playerData);
             const playerInfoPanel = document.getElementById('playerInfoPanel');
-            if (!playerInfoPanel || !playerData) return;
+            if (!playerInfoPanel) {
+                console.error('❌ Player info panel not found!');
+                return;
+            }
+            if (!playerData) {
+                console.error('❌ No player data provided!');
+                return;
+            }
 
+            console.log('✅ Updating player info fields...');
             // Update player info fields
             document.getElementById('playerInfoName').textContent = playerData.name || 'Unknown Player';
             document.getElementById('playerInfoDistance').textContent = (playerData.distance || 0) + 'm';
@@ -1108,20 +1118,46 @@
             armorBar.style.height = armorPercent + '%';
 
             // Show the panel
+            console.log('✅ Showing player info panel...');
             playerInfoPanel.style.display = 'block';
+            playerInfoPanel.style.zIndex = '9999'; // Ensure it's on top
             setTimeout(() => {
                 playerInfoPanel.classList.add('visible');
+                console.log('✅ Player info panel should now be visible');
             }, 10);
         }
 
         function hidePlayerInfo() {
+            console.log('🔍 hidePlayerInfo called');
             const playerInfoPanel = document.getElementById('playerInfoPanel');
             if (playerInfoPanel) {
+                console.log('✅ Hiding player info panel...');
                 playerInfoPanel.classList.remove('visible');
                 setTimeout(() => {
                     playerInfoPanel.style.display = 'none';
+                    console.log('✅ Player info panel hidden');
                 }, 300);
+            } else {
+                console.error('❌ Player info panel not found for hiding!');
             }
+        }
+
+        // Test function to manually show player info
+        function testPlayerInfo() {
+            console.log('🧪 Testing player info panel...');
+            const testData = {
+                name: 'Test Player',
+                id: 123,
+                distance: 25,
+                health: 150,
+                armor: 50,
+                weapon: 'Pistol',
+                vehicle: 'Outside',
+                alive: true,
+                speed: 0,
+                friend: false
+            };
+            showPlayerInfo(testData);
         }
 
         function updatePlayerInfo(playerData) {
