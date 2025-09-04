@@ -1192,7 +1192,7 @@ html, body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    margin-left: 200px; /* Position to the right of the menu */
+    margin-left: 180px; /* Position right next to the menu like external scrollbar */
     z-index: 1000;
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #f3f4f6;
@@ -1313,7 +1313,7 @@ html, body {
 
 @media (max-width: 400px) {
     .player-info-panel {
-        margin-left: 150px; /* Adjust for smaller screens */
+        margin-left: 140px; /* Adjust for smaller screens - closer to menu */
         max-width: 200px;
     }
     
