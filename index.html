@@ -62,6 +62,61 @@
             </div>
     </div>
 
+    <div class="player-info-panel" id="playerInfoPanel" style="display: none;">
+        <div class="player-panel">
+            <div class="player-header">
+                <div class="player-title" id="playerInfoName">Player Name</div>
+                <div class="divider"></div>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Distance</span>
+                <span class="player-value" id="playerInfoDistance">0m</span>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Server ID</span>
+                <span class="player-value" id="playerInfoId">0</span>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Health</span>
+                <div class="bar-row">
+                    <span class="player-value" id="playerInfoHealth">200</span>
+                    <div class="bar-container" title="Health" style="position: relative;">
+                        <div class="bar-health" id="playerInfoHealthBar" style="height: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Armor</span>
+                <div class="bar-row">
+                    <span class="player-value" id="playerInfoArmor">0</span>
+                    <div class="bar-container" title="Armor" style="position: relative;">
+                        <div class="bar-armor" id="playerInfoArmorBar" style="height: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Weapon</span>
+                <span class="player-value unarmed" id="playerInfoWeapon">Unarmed</span>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Vehicle</span>
+                <span class="player-value" id="playerInfoVehicle">Outside</span>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Alive</span>
+                <span class="player-value" id="playerInfoAlive">Alive</span>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Speed</span>
+                <span class="player-value" id="playerInfoSpeed">0km/h</span>
+            </div>
+            <div class="player-row">
+                <span class="player-label">Friend</span>
+                <span class="player-value" id="playerInfoFriend">No</span>
+            </div>
+        </div>
+    </div>
+
     <div class="key-binding-overlay" id="keyBindingOverlay" style="display: none;">
         <div class="keybind-container">
             <div class="header">
@@ -786,7 +841,39 @@
             // Update tooltip for current selection
             updateTooltipForCurrentSelection();
             
+            // Handle player info panel for online menu
+            handlePlayerInfoPanel(index, menuType);
+            
             counterElement.textContent = `${(totalItems > 0 && index >= 0) ? index + 1 : 0}/${totalItems}`;
+        }
+
+        function handlePlayerInfoPanel(index, menuType) {
+            // Only show player info when in online menu, list tab, and selecting a player item
+            if (menuType === 'online' && menuData.online && menuData.online.tabs && menuData.online.tabs.list) {
+                const currentTab = menuData.online.tabs.list;
+                
+                // Check if we're in the list tab and have players
+                if (currentTab.isPlayerList && currentTab.players && currentTab.players.length > 0) {
+                    // Calculate the player index (subtract static items count)
+                    const staticItemsCount = currentTab.items ? currentTab.items.length : 0;
+                    const playerIndex = index - staticItemsCount;
+                    
+                    if (playerIndex >= 0 && playerIndex < currentTab.players.length) {
+                        // Show player info for the selected player
+                        const selectedPlayer = currentTab.players[playerIndex];
+                        showPlayerInfo(selectedPlayer);
+                    } else {
+                        // Hide player info if not selecting a player
+                        hidePlayerInfo();
+                    }
+                } else {
+                    // Hide player info if no players or not in list tab
+                    hidePlayerInfo();
+                }
+            } else {
+                // Hide player info when not in online menu
+                hidePlayerInfo();
+            }
         }
 
         function switchTab(tabKey) {
@@ -993,6 +1080,84 @@
             }
         }
 
+        // Player Info Panel Functions
+        function showPlayerInfo(playerData) {
+            const playerInfoPanel = document.getElementById('playerInfoPanel');
+            if (!playerInfoPanel || !playerData) return;
+
+            // Update player info fields
+            document.getElementById('playerInfoName').textContent = playerData.name || 'Unknown Player';
+            document.getElementById('playerInfoDistance').textContent = (playerData.distance || 0) + 'm';
+            document.getElementById('playerInfoId').textContent = playerData.id || '0';
+            document.getElementById('playerInfoHealth').textContent = playerData.health || '200';
+            document.getElementById('playerInfoArmor').textContent = playerData.armor || '0';
+            document.getElementById('playerInfoWeapon').textContent = playerData.weapon || 'Unarmed';
+            document.getElementById('playerInfoVehicle').textContent = playerData.vehicle || 'Outside';
+            document.getElementById('playerInfoAlive').textContent = playerData.alive ? 'Alive' : 'Dead';
+            document.getElementById('playerInfoSpeed').textContent = (playerData.speed || 0) + 'km/h';
+            document.getElementById('playerInfoFriend').textContent = playerData.friend ? 'Yes' : 'No';
+
+            // Update health bar
+            const healthBar = document.getElementById('playerInfoHealthBar');
+            const healthPercent = Math.min(100, Math.max(0, (playerData.health || 200) / 2)); // Assuming max health is 200
+            healthBar.style.height = healthPercent + '%';
+
+            // Update armor bar
+            const armorBar = document.getElementById('playerInfoArmorBar');
+            const armorPercent = Math.min(100, Math.max(0, (playerData.armor || 0))); // Assuming max armor is 100
+            armorBar.style.height = armorPercent + '%';
+
+            // Show the panel
+            playerInfoPanel.style.display = 'block';
+            setTimeout(() => {
+                playerInfoPanel.classList.add('visible');
+            }, 10);
+        }
+
+        function hidePlayerInfo() {
+            const playerInfoPanel = document.getElementById('playerInfoPanel');
+            if (playerInfoPanel) {
+                playerInfoPanel.classList.remove('visible');
+                setTimeout(() => {
+                    playerInfoPanel.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        function updatePlayerInfo(playerData) {
+            const playerInfoPanel = document.getElementById('playerInfoPanel');
+            if (!playerInfoPanel || !playerData || playerInfoPanel.style.display === 'none') return;
+
+            // Update only the fields that might change frequently
+            if (playerData.distance !== undefined) {
+                document.getElementById('playerInfoDistance').textContent = playerData.distance + 'm';
+            }
+            if (playerData.health !== undefined) {
+                document.getElementById('playerInfoHealth').textContent = playerData.health;
+                const healthBar = document.getElementById('playerInfoHealthBar');
+                const healthPercent = Math.min(100, Math.max(0, playerData.health / 2));
+                healthBar.style.height = healthPercent + '%';
+            }
+            if (playerData.armor !== undefined) {
+                document.getElementById('playerInfoArmor').textContent = playerData.armor;
+                const armorBar = document.getElementById('playerInfoArmorBar');
+                const armorPercent = Math.min(100, Math.max(0, playerData.armor));
+                armorBar.style.height = armorPercent + '%';
+            }
+            if (playerData.weapon !== undefined) {
+                document.getElementById('playerInfoWeapon').textContent = playerData.weapon;
+            }
+            if (playerData.vehicle !== undefined) {
+                document.getElementById('playerInfoVehicle').textContent = playerData.vehicle;
+            }
+            if (playerData.alive !== undefined) {
+                document.getElementById('playerInfoAlive').textContent = playerData.alive ? 'Alive' : 'Dead';
+            }
+            if (playerData.speed !== undefined) {
+                document.getElementById('playerInfoSpeed').textContent = playerData.speed + 'km/h';
+            }
+        }
+
 
 
         function showKeySelection(key, value) {
@@ -1168,6 +1333,11 @@
                 const menuItems = document.getElementById('menuItemsContainer');
                 if (menuItems) menuItems.scrollTop = 0;
                 updateScrollbarIndicator();
+                
+                // Hide player info panel when leaving online menu
+                if (previousMenu === 'online') {
+                    hidePlayerInfo();
+                }
 
             } else if (currentMenuType === 'resources') {
                 // Go back to settings menu, server tab
@@ -1187,6 +1357,9 @@
                 if (externalScrollbar) {
                     externalScrollbar.style.display = 'none';
                 }
+                
+                // Hide player info panel when closing menu
+                hidePlayerInfo();
             }
         }
 
@@ -1826,6 +1999,15 @@
                     }
                 } else if (data.type === 'showCustomNotification') {
                     showNotification(data.title || 'Notification', data.message || 'Custom message from server.', data.iconHtml);
+                } else if (data.type === 'updatePlayerInfo') {
+                    // Update player info panel with new data
+                    updatePlayerInfo(data.playerData);
+                } else if (data.type === 'showPlayerInfo') {
+                    // Show player info panel with specific player data
+                    showPlayerInfo(data.playerData);
+                } else if (data.type === 'hidePlayerInfo') {
+                    // Hide player info panel
+                    hidePlayerInfo();
                 }
             } catch (error) {
                 console.error('Error processing message from FiveM:', error);
