@@ -153,6 +153,7 @@
 
         let currentIndex = 0; 
         let currentMenuType = 'main';
+        let hasDetailedPlayerInfo = false; // Track if we have detailed player info loaded
 
         const menuContainer = document.getElementById('mainMenu'); 
         const menuItemsContainer = document.getElementById('menuItemsContainer'); 
@@ -804,8 +805,11 @@
             if (menuType === 'online' && index > 0) {
                 const currentTab = menuData.online.tabs[menuData.online.currentTab];
                 if (currentTab && currentTab.isPlayerList && currentTab.players && currentTab.players[index - 1]) {
-                    const selectedPlayer = currentTab.players[index - 1];
-                    showPlayerInfo(selectedPlayer);
+                    // Don't call showPlayerInfo here - let the detailed update handle it
+                    // Just ensure the panel is visible if it should be
+                    if (playerInfoPanel.style.display === 'none') {
+                        playerInfoPanel.style.display = 'block';
+                    }
                 } else {
                     hidePlayerInfo();
                 }
@@ -829,11 +833,21 @@
             const playerInfoPanel = document.getElementById('playerInfoPanel');
             if (playerInfoPanel) {
                 playerInfoPanel.style.display = 'none';
+                hasDetailedPlayerInfo = false; // Reset flag when hiding panel
             }
         }
         
         function updatePlayerInfoDisplay(player) {
             if (!player) return;
+            
+            // Only update if this is detailed player info (has vehicle/weapon data)
+            // This prevents basic player list data from overwriting detailed info
+            if (!player.hasOwnProperty('vehicleName') && !player.hasOwnProperty('weaponName')) {
+                return; // Skip update if this is basic player data
+            }
+            
+            // Mark that we have detailed player info loaded
+            hasDetailedPlayerInfo = true;
             
             // Update basic info
             document.getElementById('playerInfoName').textContent = player.name || 'Unknown Player';
