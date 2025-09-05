@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 183</span>
+            <span class="version">Version: Beta | build: 184</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -196,7 +196,6 @@
                     { name: "Solo Session", action: "solo_session", type: "toggle", checked: false, icon: '<i class="fa-solid fa-user"></i>', desc: "Toggle Solo Session", tooltip: "Start or stop solo session mode" },
                     { name: "Uncuff/Cuff", action: "toggle_handcuff", icon: '<i class="fa-solid fa-handcuffs"></i>', desc: "Toggle handcuff status", tooltip: "Toggle between cuffed and uncuffed state" },
                     { name: "Drag/Undrag", action: "toggle_drag", icon: '<i class="fa-solid fa-arrows-up-down-left-right"></i>', desc: "Toggle drag status", tooltip: "Toggle between drag and undrag state" },
-                    { name: "Desync Mode", action: "desync_mode", type: "toggle", checked: false, icon: '<i class="fa-solid fa-user-ninja"></i>', desc: "Desync ped from server", tooltip: "Your ped moves freely but server sees original position" },
                 ]
             },
                     wardrobe: {
@@ -1826,14 +1825,6 @@
                         if (godModeItem) {
                             godModeItem.checked = data.checked;
                             // Re-render the menu to show updated checkbox state
-                            renderMenuItems(currentMenuType);
-                            updateSelection(currentIndex, currentMenuType);
-                        }
-                    } else if (data.action === 'desync_mode' && currentMenuType === 'self' && menuData.self.tabs.miscellaneous) {
-                        const desyncItem = menuData.self.tabs.miscellaneous.items.find(item => item.action === 'desync_mode');
-                        if (desyncItem) {
-                            desyncItem.checked = data.checked;
-                            // Re-render the menu to show updated toggle state
                             renderMenuItems(currentMenuType);
                             updateSelection(currentIndex, currentMenuType);
                         }
