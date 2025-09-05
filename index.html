@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 182</span>
+            <span class="version">Version: Beta | build: 183</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -898,43 +898,31 @@
             // Handle player info panel visibility
             handlePlayerInfoPanel(index, menuType);
 
-            // Only update selection and tooltip if the index has changed
-            if (currentIndex !== index) {
-                // Remove selection from all items first
-                currentItems.forEach(item => {
-                    item.classList.remove('selected');
-                });
-                
-                currentIndex = index;
+            // Remove selection from all items first
+            currentItems.forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            currentIndex = index;
 
-                if (totalItems > 0 && index >= 0 && index < totalItems) {
-                    currentItems[index].classList.add('selected');
-                    
-                    // Show tooltip for the selected item
-                    const currentMenu = menuData[menuType];
-                    if (currentMenu) {
-                        if (currentMenu.isTabbed) {
-                            const currentTab = currentMenu.tabs[currentMenu.currentTab];
-                            if (currentTab && currentTab.items && currentTab.items[index]) {
-                                showTooltip(currentTab.items[index].tooltip);
-                            }
-                        } else if (currentMenu.items && currentMenu.items[index]) {
-                            showTooltip(currentMenu.items[index].tooltip);
-                        } else {
-                            hideTooltip();
-                        }
-                    } else {
-                        hideTooltip();
-                    }
-                } else {
-                    hideTooltip();
+            if (totalItems > 0 && index >= 0 && index < totalItems) {
+                currentItems[index].classList.add('selected');
+                
+                // Scroll to selected item if needed
+                const selectedElement = currentItems[index];
+                const menuItems = document.getElementById('menuItemsContainer');
+                const itemTop = selectedElement.offsetTop;
+                const itemHeight = selectedElement.offsetHeight;
+                const containerHeight = menuItems.clientHeight;
+                const scrollTop = menuItems.scrollTop;
+                
+                if (itemTop < scrollTop) {
+                    menuItems.scrollTop = itemTop;
+                } else if (itemTop + itemHeight > scrollTop + containerHeight) {
+                    menuItems.scrollTop = itemTop + itemHeight - containerHeight;
                 }
             }
-            
-            // Always update the counter
-            counterElement.textContent = `${index + 1}/${totalItems}`; 
-            
-            // Always update highlight bar position
+
             if (highlightBar) {
                 if (totalItems > 0 && index >= 0 && index < totalItems) {
                     const selectedElement = currentItems[index]; 
@@ -945,17 +933,14 @@
                     highlightBar.style.display = 'none';
                 }
             }
-
-            // Scroll to the selected item
-            if (totalItems > 0 && index >= 0 && index < totalItems) {
-                const selectedItem = currentItems[index];
-                if (selectedItem) {
-                    selectedItem.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'nearest'
-                    });
-                }
-            }
+            
+            // Update scrollbar indicator
+            updateScrollbarIndicator();
+            
+            // Update tooltip for current selection
+            updateTooltipForCurrentSelection();
+            
+            counterElement.textContent = `${(totalItems > 0 && index >= 0) ? index + 1 : 0}/${totalItems}`;
         }
 
         function switchTab(tabKey) {
@@ -1989,8 +1974,6 @@
                             menuData.online.tabs.list.players = data.players;
                             // Re-render the menu to show updated player list with toggle states
                             renderMenuItems(currentMenuType);
-                            // Don't update selection or tooltip when just populating the list
-                            // This prevents the tooltip from blinking
                             updateSelection(currentIndex, currentMenuType);
                             updateScrollbarIndicator();
                         }
