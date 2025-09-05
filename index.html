@@ -36,7 +36,7 @@
         </div>
         
         <div class="menu-footer">
-            <span class="version">Version: Beta | build: 181</span>
+            <span class="version">Version: Beta | build: 182</span>
             <span class="counter" id="counter">1/9</span> 
         </div>
 
@@ -1119,24 +1119,29 @@
         }
 
         // Tooltip Functions - Using Spectators List render logic approach
-        let lastTooltipText = '';
-
         function showTooltip(text) {
-            if (!text) {
-                hideTooltip();
-                return;
+            const tooltipContainer = document.getElementById('tooltipContainer');
+            const tooltipContent = document.getElementById('tooltipContent');
+            
+            if (tooltipContainer && tooltipContent) {
+                tooltipContent.textContent = text;
+                tooltipContainer.style.display = 'block';
+                
+                // Show with animation
+                setTimeout(() => {
+                    tooltipContainer.classList.add('visible');
+                }, 10);
             }
-            // Only update the DOM if the text is different, to prevent blinking
-            if (text !== lastTooltipText) {
-                tooltipContent.innerHTML = text;
-                lastTooltipText = text;
-            }
-            tooltipContainer.style.display = 'block';
         }
 
         function hideTooltip() {
-            tooltipContainer.style.display = 'none';
-            lastTooltipText = '';
+            const tooltipContainer = document.getElementById('tooltipContainer');
+            if (tooltipContainer) {
+                tooltipContainer.classList.remove('visible');
+                setTimeout(() => {
+                    tooltipContainer.style.display = 'none';
+                }, 300);
+            }
         }
 
         function updateTooltipForCurrentSelection() {
@@ -1984,7 +1989,8 @@
                             menuData.online.tabs.list.players = data.players;
                             // Re-render the menu to show updated player list with toggle states
                             renderMenuItems(currentMenuType);
-                            // Re-apply selection after re-rendering
+                            // Don't update selection or tooltip when just populating the list
+                            // This prevents the tooltip from blinking
                             updateSelection(currentIndex, currentMenuType);
                             updateScrollbarIndicator();
                         }
