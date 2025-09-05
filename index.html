@@ -196,6 +196,7 @@
                     { name: "Solo Session", action: "solo_session", type: "toggle", checked: false, icon: '<i class="fa-solid fa-user"></i>', desc: "Toggle Solo Session", tooltip: "Start or stop solo session mode" },
                     { name: "Uncuff/Cuff", action: "toggle_handcuff", icon: '<i class="fa-solid fa-handcuffs"></i>', desc: "Toggle handcuff status", tooltip: "Toggle between cuffed and uncuffed state" },
                     { name: "Drag/Undrag", action: "toggle_drag", icon: '<i class="fa-solid fa-arrows-up-down-left-right"></i>', desc: "Toggle drag status", tooltip: "Toggle between drag and undrag state" },
+                    
                 ]
             },
                     wardrobe: {
@@ -909,14 +910,6 @@
                 if (totalItems > 0 && index >= 0 && index < totalItems) {
                     currentItems[index].classList.add('selected');
                     
-                    // Update highlight bar position
-                    if (highlightBar) {
-                        const selectedElement = currentItems[index];
-                        const topPosition = selectedElement.offsetTop;
-                        highlightBar.style.top = `${topPosition}px`;
-                        highlightBar.style.display = 'block';
-                    }
-                    
                     // Show tooltip for the selected item
                     const currentMenu = menuData[menuType];
                     if (currentMenu) {
@@ -934,9 +927,6 @@
                         hideTooltip();
                     }
                 } else {
-                    if (highlightBar) {
-                        highlightBar.style.display = 'none';
-                    }
                     hideTooltip();
                 }
             }
