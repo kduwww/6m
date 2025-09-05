@@ -909,6 +909,14 @@
                 if (totalItems > 0 && index >= 0 && index < totalItems) {
                     currentItems[index].classList.add('selected');
                     
+                    // Update highlight bar position
+                    if (highlightBar) {
+                        const selectedElement = currentItems[index];
+                        const topPosition = selectedElement.offsetTop;
+                        highlightBar.style.top = `${topPosition}px`;
+                        highlightBar.style.display = 'block';
+                    }
+                    
                     // Show tooltip for the selected item
                     const currentMenu = menuData[menuType];
                     if (currentMenu) {
@@ -926,6 +934,9 @@
                         hideTooltip();
                     }
                 } else {
+                    if (highlightBar) {
+                        highlightBar.style.display = 'none';
+                    }
                     hideTooltip();
                 }
             }
